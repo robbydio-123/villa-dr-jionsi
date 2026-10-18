@@ -742,7 +742,7 @@ a:hover {
     position: relative;
     border-radius: 16px;
     overflow: hidden;
-    background: linear-gradient(rgba(24, 19, 16, 0.75), rgba(24, 19, 16, 0.88)), url('../uploads/kamar/kamar-201-utama.jpg') center/cover no-repeat;
+    background: linear-gradient(135deg, #241C16 0%, #3D322A 50%, #201813 100%);
     color: #FFFFFF;
     padding: 4.5rem 2.5rem 5rem;
     margin-bottom: 2rem;
