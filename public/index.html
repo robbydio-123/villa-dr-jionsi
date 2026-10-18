@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Beranda &amp; Katalog Kamar · Villa D-R Jionsi Kota Batu</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+    <!-- NAVBAR (Sesuai PDF) -->
+    <nav class="navbar navbar-expand-lg dr-navbar sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <div>
+                    <div style="font-size: 1.25rem; font-weight: 800; color: #2C241E; letter-spacing: -0.02em;">D-R Jionsi</div>
+                    <small style="font-size: 0.72rem; font-weight: 600; color: #8A7E74; letter-spacing: 0.02em;">Katalog &amp; Reservasi Villa Kota Batu</small>
+                </div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                    aria-controls="mainNav" aria-expanded="false" aria-label="Buka navigasi">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <div class="navbar-nav ms-auto align-items-lg-center gap-lg-3 my-2 my-lg-0">
+                    <a class="nav-link active" href="index.html">Katalog Kamar</a>
+                    <a class="nav-link" href="cek-status.html">Cek Status Reservasi</a>
+                    <a class="nav-link" href="profil.html">Profil Villa &amp; Fasilitas</a>
+                    <a class="admin-login-pill ms-lg-2" href="#adminLoginModal" data-bs-toggle="modal">
+                        <span>/admin/login</span>
+                        <div class="user-avatar-circle">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="container py-4">
+
+        <!-- HERO SECTION (Sesuai PDF) -->
+        <section class="hero-pdf">
+            <span class="hero-pdf-pill">SONGGOKERTO HIGHLAND · KOTA BATU</span>
+            <h1>Villa D-R Jionsi</h1>
+            <p class="lead-subtitle">Menginap nyaman di Batu, lihat kondisi kamar yang sebenarnya.</p>
+            <div class="hero-pdf-features">
+                <span class="hero-feature-chip">
+                    <i class="bi bi-water"></i> Air Panas di setiap kamar
+                </span>
+                <span class="hero-feature-chip">
+                    <i class="bi bi-tv"></i> Smart TV di setiap kamar
+                </span>
+            </div>
+            <div>
+                <a href="profil.html" class="btn btn-terracotta px-4 py-2" style="border-radius: 8px;">
+                    Lihat Profil Villa <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- FLOATING SEARCH & FILTER CARD (Sesuai PDF) -->
+        <div class="search-filter-card">
+            <!-- Row 1: Check-in, Check-out, Kapasitas, Rentang Tarif, Button -->
+            <div class="row g-3 align-items-center mb-3">
+                <div class="col-6 col-md-3 col-lg-2">
+                    <div class="filter-field-box">
+                        <label class="filter-field-label" for="filterCheckin">
+                            <i class="bi bi-calendar-event"></i> CHECK-IN
+                        </label>
+                        <input type="text" id="filterCheckin" class="filter-field-input" value="10/26/2026">
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2">
+                    <div class="filter-field-box">
+                        <label class="filter-field-label" for="filterCheckout">
+                            <i class="bi bi-calendar-event"></i> CHECK-OUT
+                        </label>
+                        <input type="text" id="filterCheckout" class="filter-field-input" value="10/27/2026">
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2">
+                    <div class="filter-field-box">
+                        <div class="filter-field-label">
+                            <i class="bi bi-people"></i> KAPASITAS
+                        </div>
+                        <div class="stepper-control">
+                            <button type="button" class="stepper-btn" onclick="adjustCapacity(-1)">−</button>
+                            <span id="capacityVal" style="font-weight: 700; font-size: 0.95rem; color: #2C241E;">2 Tamu</span>
+                            <button type="button" class="stepper-btn" onclick="adjustCapacity(1)">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 col-lg-4">
+                    <div class="filter-field-box">
+                        <div class="filter-field-label">
+                            <i class="bi bi-cash-stack"></i> RENTANG TARIF / MALAM
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="d-flex align-items-center gap-1 w-50">
+                                <span style="font-size: 0.65rem; color: #8A7E74; font-weight: 700;">MIN</span>
+                                <input type="text" id="minPriceInput" class="filter-field-input" value="Rp 400.000">
+                            </div>
+                            <span style="color: #D5CBC0;">|</span>
+                            <div class="d-flex align-items-center gap-1 w-50">
+                                <span style="font-size: 0.65rem; color: #8A7E74; font-weight: 700;">MAKS</span>
+                                <input type="text" id="maxPriceInput" class="filter-field-input" value="Rp 900.000">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-2 text-end">
+                    <button type="button" class="btn btn-terracotta w-100 py-2 d-flex align-items-center justify-content-center gap-2" style="border-radius: 8px; height: 52px;" onclick="applyFilter()">
+                        <i class="bi bi-search"></i> <span>Cari Kamar</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <hr style="border-color: #F0EAE1; margin: 1rem 0;">
+
+            <!-- Row 2: Fasilitas Checkboxes, Search input, Reset -->
+            <div class="row g-3 align-items-center justify-content-between">
+                <div class="col-12 col-xl-8">
+                    <div class="facilities-check-row">
+                        <span class="facility-filter-label">Fasilitas:</span>
+                        <label class="facility-pill-check">
+                            <input type="checkbox" id="facAirPanas" checked onchange="applyFilter()">
+                            <span>Air Panas</span>
+                        </label>
+                        <label class="facility-pill-check">
+                            <input type="checkbox" id="facSmartTv" checked onchange="applyFilter()">
+                            <span>Smart TV</span>
+                        </label>
+                        <label class="facility-pill-check">
+                            <input type="checkbox" id="facWifi" onchange="applyFilter()">
+                            <span>Wi-Fi</span>
+                        </label>
+                        <label class="facility-pill-check">
+                            <input type="checkbox" id="facKmDalam" onchange="applyFilter()">
+                            <span>Kamar Mandi Dalam</span>
+                        </label>
+                        <label class="facility-pill-check">
+                            <input type="checkbox" id="facDapur" onchange="applyFilter()">
+                            <span>Dapur Bersama</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0" style="border-color: #E8E2D9;">
+                                <i class="bi bi-search text-muted"></i>
+                            </span>
+                            <input type="text" id="keywordInput" class="form-control border-start-0 ps-0" placeholder="Cari nama kamar atau fasilitas..." style="border-color: #E8E2D9; font-size: 0.88rem;" oninput="applyFilter()">
+                        </div>
+                        <a href="javascript:void(0)" onclick="resetFilter()" class="d-flex align-items-center gap-1 text-muted text-nowrap" style="font-size: 0.85rem; font-weight: 600;">
+                            <i class="bi bi-arrow-counterclockwise"></i> Atur Ulang
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CATALOG HEADER (Sesuai PDF) -->
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+            <div class="d-flex align-items-center gap-2">
+                <h3 class="mb-0" style="font-weight: 800; font-size: 1.45rem; color: #2C241E;">Katalog Pilihan Kamar</h3>
+                <span class="badge" style="background-color: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; border-radius: 20px; font-weight: 700; font-size: 0.78rem; padding: 0.35rem 0.65rem;">
+                    ● <span id="roomCountText">6 Unit Siap Huni</span>
+                </span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <label for="sortOrder" style="font-size: 0.85rem; font-weight: 600; color: #6B625B;">Urutkan:</label>
+                <select id="sortOrder" class="form-select form-select-sm" style="width: auto; border-color: #D5CBC0; font-weight: 600; border-radius: 8px;" onchange="sortRooms()">
+                    <option value="price_asc" selected>Harga Terendah</option>
+                    <option value="price_desc">Harga Tertinggi</option>
+                    <option value="capacity_desc">Kapasitas Terbesar</option>
+                    <option value="room_no">Nomor Kamar</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- ROOM CARDS GRID (3 Kolom Sesuai PDF) -->
+        <div class="row g-4" id="roomGrid">
+
+            <!-- 1. KAMAR 201: Family Suite Panderman (Di-Keep) -->
+            <div class="col-12 col-md-6 col-lg-4 room-item" data-price="850000" data-capacity="6" data-room="201" data-name="Family Suite Panderman" data-facilities="wifi smarttv airpanas kmdalam">
+                <div class="room-card-pdf">
+                    <div class="img-wrap">
+                        <span class="room-status-badge room-status-dikeep">
+                            <i class="bi bi-clock-history"></i> Di-Keep · 09:42
+                        </span>
+                        <a href="detail-kamar-201.html">
+                            <img src="uploads/kamar/kamar-201-utama.jpg" alt="Family Suite Panderman" loading="lazy">
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        <div class="room-meta-header">
+                            <span>KAMAR 201 · LANTAI 2</span>
+                            <span><i class="bi bi-person-fill"></i> Maks 6 tamu</span>
+                        </div>
+                        <h4 class="room-title-pdf">Family Suite Panderman</h4>
+                        <div class="room-chips-row">
+                            <span class="room-chip"><i class="bi bi-wifi"></i> Wi-Fi</span>
+                            <span class="room-chip"><i class="bi bi-tv"></i> Smart TV</span>
+                            <span class="room-chip"><i class="bi bi-water"></i> Air Panas</span>
+                            <span class="room-chip">+2</span>
+                        </div>
+                        <div class="room-update-notice">
+                            <i class="bi bi-check-circle-fill"></i> Kondisi diperbarui 3 hari lalu
+                        </div>
+                        <div class="room-card-footer">
+                            <div>
+                                <span class="price-label">Tarif Sewa:</span>
+                                <div class="price-value">Rp 850.000 <small>/ malam</small></div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <a href="detail-kamar-201.html" class="btn btn-outline-secondary btn-sm" style="border-radius: 6px; font-weight: 600; font-size: 0.8rem; border-color: #D5CBC0; color: #4A4038;">
+                                    Lihat Detail
+                                </a>
+                                <button type="button" class="btn-keep-disabled" title="Kamar sedang dalam masa keep 15 menit oleh tamu lain">
+                                    Sedang Di-Keep
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. KAMAR 101: Deluxe Arjuno (Tersedia) -->
+            <div class="col-12 col-md-6 col-lg-4 room-item" data-price="450000" data-capacity="2" data-room="101" data-name="Deluxe Arjuno" data-facilities="airpanas smarttv kmdalam">
+                <div class="room-card-pdf">
+                    <div class="img-wrap">
+                        <span class="room-status-badge room-status-tersedia">
+                            <i class="bi bi-check-circle-fill"></i> Tersedia
+                        </span>
+                        <a href="detail-kamar-201.html">
+                            <img src="uploads/kamar/kamar-101-utama.jpg" alt="Deluxe Arjuno" loading="lazy">
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        <div class="room-meta-header">
+                            <span>KAMAR 101 · LANTAI 1</span>
+                            <span><i class="bi bi-person-fill"></i> Maks 2 tamu</span>
+                        </div>
+                        <h4 class="room-title-pdf">Deluxe Arjuno</h4>
+                        <div class="room-chips-row">
+                            <span class="room-chip"><i class="bi bi-water"></i> Air Panas</span>
+                            <span class="room-chip"><i class="bi bi-tv"></i> Smart TV</span>
+                            <span class="room-chip">KM Dalam</span>
+                            <span class="room-chip">+1</span>
+                        </div>
+                        <div class="room-update-notice">
+                            <i class="bi bi-check-circle-fill"></i> Kondisi diperbarui 1 hari lalu
+                        </div>
+                        <div class="room-card-footer">
+                            <div>
+                                <span class="price-label">Tarif Sewa:</span>
+                                <div class="price-value">Rp 450.000 <small>/ malam</small></div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <a href="detail-kamar-201.html" class="btn btn-outline-secondary btn-sm" style="border-radius: 6px; font-weight: 600; font-size: 0.8rem; border-color: #D5CBC0; color: #4A4038;">
+                                    Lihat Detail
+                                </a>
+                                <a href="reservasi.html?kamar=101" class="btn-keep-active">
+                                    Keep Kamar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. KAMAR 102: Twin Welirang (Terisi) -->
+            <div class="col-12 col-md-6 col-lg-4 room-item" data-price="550000" data-capacity="3" data-room="102" data-name="Twin Welirang" data-facilities="airpanas smarttv dapur">
+                <div class="room-card-pdf">
+                    <div class="img-wrap">
+                        <span class="room-status-badge room-status-terisi">
+                            <i class="bi bi-lock-fill"></i> Terisi
+                        </span>
+                        <a href="detail-kamar-201.html">
+                            <img src="uploads/kamar/kamar-102-utama.jpg" alt="Twin Welirang" loading="lazy">
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        <div class="room-meta-header">
+                            <span>KAMAR 102 · LANTAI 1</span>
+                            <span><i class="bi bi-person-fill"></i> Maks 3 tamu</span>
+                        </div>
+                        <h4 class="room-title-pdf">Twin Welirang</h4>
+                        <div class="room-chips-row">
+                            <span class="room-chip"><i class="bi bi-water"></i> Air Panas</span>
+                            <span class="room-chip"><i class="bi bi-tv"></i> Smart TV</span>
+                            <span class="room-chip"><i class="bi bi-cup-hot"></i> Dapur Bersama</span>
+                        </div>
+                        <div class="room-update-notice">
+                            <i class="bi bi-check-circle-fill"></i> Kondisi diperbarui 2 hari lalu
+                        </div>
+                        <div class="room-card-footer">
+                            <div>
+                                <span class="price-label">Tarif Sewa:</span>
+                                <div class="price-value">Rp 550.000 <small>/ malam</small></div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <a href="detail-kamar-201.html" class="btn btn-outline-secondary btn-sm" style="border-radius: 6px; font-weight: 600; font-size: 0.8rem; border-color: #D5CBC0; color: #4A4038;">
+                                    Lihat Detail
+                                </a>
+                                <button type="button" class="btn-terisi-disabled" disabled>
+                                    <i class="bi bi-lock"></i> Terisi s.d 28 Okt
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. KAMAR 202: Superior Kawi (Tersedia, Catatan Lama) -->
+            <div class="col-12 col-md-6 col-lg-4 room-item" data-price="650000" data-capacity="4" data-room="202" data-name="Superior Kawi" data-facilities="airpanas smarttv bathtub">
+                <div class="room-card-pdf">
+                    <div class="img-wrap">
+                        <span class="room-status-badge room-status-tersedia">
+                            <i class="bi bi-check-circle-fill"></i> Tersedia
+                        </span>
+                        <a href="detail-kamar-201.html">
+                            <img src="uploads/kamar/kamar-202-utama.jpg" alt="Superior Kawi" loading="lazy">
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        <div class="room-meta-header">
+                            <span>KAMAR 202 · LANTAI 2</span>
+                            <span><i class="bi bi-person-fill"></i> Maks 4 tamu</span>
+                        </div>
+                        <h4 class="room-title-pdf">Superior Kawi</h4>
+                        <div class="room-chips-row">
+                            <span class="room-chip"><i class="bi bi-water"></i> Air Panas</span>
+                            <span class="room-chip"><i class="bi bi-tv"></i> Smart TV</span>
+                            <span class="room-chip">Bathtub</span>
+                            <span class="room-chip">+1</span>
+                        </div>
+                        <!-- Catatan > 7 hari (sesuai SRS FR-02 & PDF) -->
+                        <div class="room-update-notice old-update">
+                            <i class="bi bi-exclamation-triangle-fill"></i> Pembaruan kondisi lama (10 hari lalu)
+                        </div>
+                        <div class="room-card-footer">
+                            <div>
+                                <span class="price-label">Tarif Sewa:</span>
+                                <div class="price-value">Rp 650.000 <small>/ malam</small></div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <a href="detail-kamar-201.html" class="btn btn-outline-secondary btn-sm" style="border-radius: 6px; font-weight: 600; font-size: 0.8rem; border-color: #D5CBC0; color: #4A4038;">
+                                    Lihat Detail
+                                </a>
+                                <a href="reservasi.html?kamar=202" class="btn-keep-active">
+                                    Keep Kamar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. KAMAR 301: Panorama Butak (Tersedia) -->
+            <div class="col-12 col-md-6 col-lg-4 room-item" data-price="750000" data-capacity="4" data-room="301" data-name="Panorama Butak" data-facilities="airpanas smarttv skydeck">
+                <div class="room-card-pdf">
+                    <div class="img-wrap">
+                        <span class="room-status-badge room-status-tersedia">
+                            <i class="bi bi-check-circle-fill"></i> Tersedia
+                        </span>
+                        <a href="detail-kamar-201.html">
+                            <img src="uploads/kamar/extracted_20.jpg" alt="Panorama Butak" loading="lazy">
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        <div class="room-meta-header">
+                            <span>KAMAR 301 · LANTAI 3</span>
+                            <span><i class="bi bi-person-fill"></i> Maks 4 tamu</span>
+                        </div>
+                        <h4 class="room-title-pdf">Panorama Butak</h4>
+                        <div class="room-chips-row">
+                            <span class="room-chip"><i class="bi bi-water"></i> Air Panas</span>
+                            <span class="room-chip"><i class="bi bi-tv"></i> Smart TV</span>
+                            <span class="room-chip">Sky Deck</span>
+                            <span class="room-chip">+2</span>
+                        </div>
+                        <div class="room-update-notice">
+                            <i class="bi bi-check-circle-fill"></i> Kondisi diperbarui 2 hari lalu
+                        </div>
+                        <div class="room-card-footer">
+                            <div>
+                                <span class="price-label">Tarif Sewa:</span>
+                                <div class="price-value">Rp 750.000 <small>/ malam</small></div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <a href="detail-kamar-201.html" class="btn btn-outline-secondary btn-sm" style="border-radius: 6px; font-weight: 600; font-size: 0.8rem; border-color: #D5CBC0; color: #4A4038;">
+                                    Lihat Detail
+                                </a>
+                                <a href="reservasi.html?kamar=301" class="btn-keep-active">
+                                    Keep Kamar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. KAMAR 302: Studio Semeru (Tersedia) -->
+            <div class="col-12 col-md-6 col-lg-4 room-item" data-price="500000" data-capacity="2" data-room="302" data-name="Studio Semeru" data-facilities="airpanas smarttv wifi">
+                <div class="room-card-pdf">
+                    <div class="img-wrap">
+                        <span class="room-status-badge room-status-tersedia">
+                            <i class="bi bi-check-circle-fill"></i> Tersedia
+                        </span>
+                        <a href="detail-kamar-201.html">
+                            <img src="uploads/kamar/extracted_15.jpg" alt="Studio Semeru" loading="lazy">
+                        </a>
+                    </div>
+                    <div class="card-content">
+                        <div class="room-meta-header">
+                            <span>KAMAR 302 · LANTAI 3</span>
+                            <span><i class="bi bi-person-fill"></i> Maks 2 tamu</span>
+                        </div>
+                        <h4 class="room-title-pdf">Studio Semeru</h4>
+                        <div class="room-chips-row">
+                            <span class="room-chip"><i class="bi bi-water"></i> Air Panas</span>
+                            <span class="room-chip"><i class="bi bi-tv"></i> Smart TV</span>
+                            <span class="room-chip"><i class="bi bi-wifi"></i> Wi-Fi</span>
+                            <span class="room-chip">+1</span>
+                        </div>
+                        <div class="room-update-notice">
+                            <i class="bi bi-check-circle-fill"></i> Kondisi diperbarui 4 hari lalu
+                        </div>
+                        <div class="room-card-footer">
+                            <div>
+                                <span class="price-label">Tarif Sewa:</span>
+                                <div class="price-value">Rp 500.000 <small>/ malam</small></div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <a href="detail-kamar-201.html" class="btn btn-outline-secondary btn-sm" style="border-radius: 6px; font-weight: 600; font-size: 0.8rem; border-color: #D5CBC0; color: #4A4038;">
+                                    Lihat Detail
+                                </a>
+                                <a href="reservasi.html?kamar=302" class="btn-keep-active">
+                                    Keep Kamar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- EMPTY STATE (Sesuai SRS FR-01) -->
+        <div id="noRoomsAlert" class="empty-state mt-4 d-none">
+            <i class="bi bi-search"></i>
+            <h3 class="h5 mt-3">Tidak ada kamar yang cocok dengan kriteria filter</h3>
+            <p class="text-secondary mb-3">Silakan sesuaikan tanggal, rentang harga, atau atur ulang fasilitas pilihan Anda.</p>
+            <button class="btn btn-outline-terracotta btn-sm" onclick="resetFilter()">Atur Ulang Pencarian</button>
+        </div>
+
+    </main>
+
+    <!-- FOOTER (Sesuai PDF) -->
+    <footer class="pdf-footer">
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <div class="col-12 col-md-5">
+                    <div style="font-weight: 800; font-size: 1.15rem; color: #2C241E; margin-bottom: 0.2rem;">Villa D-R Jionsi</div>
+                    <div style="font-size: 0.85rem; color: #6B6056; font-weight: 600; margin-bottom: 0.85rem;">Highland Sanctuary · Kota Batu</div>
+                    <p style="font-size: 0.85rem; line-height: 1.55; color: #554A42; max-width: 380px; margin-bottom: 1rem;">
+                        Penginapan bergaya alpine modern di lereng Gunung Panderman Songgokerto. Menyajikan transparansi penuh kondisi kamar nyata unedited untuk kenyamanan dan ketenangan liburan keluarga Anda.
+                    </p>
+                    <div style="font-size: 0.82rem; color: #554A42;">
+                        <i class="bi bi-geo-alt-fill text-muted me-1"></i> Jl. Jeruk No. 21, Songgokerto, Kec. Batu, Kota Batu, Jawa Timur 65312
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <h6>KONTAK &amp; RESERVASI</h6>
+                    <div class="d-flex flex-column gap-2" style="font-size: 0.88rem;">
+                        <div><i class="bi bi-telephone-fill me-2 text-muted"></i> +62 812-0000-0000</div>
+                        <div><i class="bi bi-envelope-fill me-2 text-muted"></i> reservasi@villadrjionsi.com</div>
+                        <div><i class="bi bi-chat-dots-fill me-2 text-muted"></i> Layanan Chat: 08.00 – 21.00 WIB setiap hari</div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3">
+                    <h6>NAVIGASI TAMU</h6>
+                    <div class="d-flex flex-column gap-2" style="font-weight: 600;">
+                        <a href="index.html">&gt; Katalog Kamar</a>
+                        <a href="cek-status.html">&gt; Cek Reservasi</a>
+                        <a href="profil.html">&gt; Profil &amp; Fasilitas</a>
+                        <a href="#adminLoginModal" data-bs-toggle="modal">&gt; Portal Pengelola</a>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-2" style="font-size: 0.8rem; color: #6E6359;">
+                <div>
+                    &copy; 2025 Villa D-R Jionsi Kota Batu. Hak Cipta Dilindungi.
+                </div>
+                <div>
+                    <a href="javascript:void(0)">Kebijakan Privasi</a> &bull; 
+                    <a href="javascript:void(0)">Syarat &amp; Ketentuan</a> &bull; 
+                    <span style="color: #059669; font-weight: 600;">● Sistem Reservasi Aktif (Kota Batu)</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL SIMULASI ADMIN LOGIN -->
+    <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+            <div class="modal-content" style="border-radius: 14px; border: 1px solid #E8DFD3;">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body px-4 pt-1 pb-4 text-center">
+                    <div class="login-icon mx-auto mb-3">
+                        <i class="bi bi-shield-lock-fill"></i>
+                    </div>
+                    <h4 class="fw-bold mb-1">Portal Pengelola</h4>
+                    <p class="text-secondary small mb-4">Masuk untuk mengelola kamar, verifikasi transfer, dan memproses reservasi.</p>
+                    <form onsubmit="event.preventDefault(); alert('Kredensial Default SRS: \nUsername: pengelola\nPassword: admin123');">
+                        <div class="text-start mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" value="pengelola" readonly>
+                        </div>
+                        <div class="text-start mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" value="admin123" readonly>
+                        </div>
+                        <button type="submit" class="btn btn-terracotta w-100 py-2 fw-bold">Masuk Dashboard</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentCapacity = 2;
+
+        function adjustCapacity(delta) {
+            currentCapacity = Math.max(1, currentCapacity + delta);
+            document.getElementById('capacityVal').innerText = currentCapacity + ' Tamu';
+            applyFilter();
+        }
+
+        function resetFilter() {
+            currentCapacity = 2;
+            document.getElementById('capacityVal').innerText = '2 Tamu';
+            document.getElementById('minPriceInput').value = 'Rp 400.000';
+            document.getElementById('maxPriceInput').value = 'Rp 900.000';
+            document.getElementById('keywordInput').value = '';
+            document.getElementById('facAirPanas').checked = true;
+            document.getElementById('facSmartTv').checked = true;
+            document.getElementById('facWifi').checked = false;
+            document.getElementById('facKmDalam').checked = false;
+            document.getElementById('facDapur').checked = false;
+            applyFilter();
+        }
+
+        function parseRupiah(str) {
+            return parseInt(str.replace(/[^0-9]/g, ''), 10) || 0;
+        }
+
+        function applyFilter() {
+            const minPrice = parseRupiah(document.getElementById('minPriceInput').value) || 0;
+            const maxPrice = parseRupiah(document.getElementById('maxPriceInput').value) || 99999999;
+            const keyword = document.getElementById('keywordInput').value.toLowerCase().trim();
+
+            const reqAirPanas = document.getElementById('facAirPanas').checked;
+            const reqSmartTv = document.getElementById('facSmartTv').checked;
+            const reqWifi = document.getElementById('facWifi').checked;
+            const reqKmDalam = document.getElementById('facKmDalam').checked;
+            const reqDapur = document.getElementById('facDapur').checked;
+
+            const items = document.querySelectorAll('.room-item');
+            let visibleCount = 0;
+
+            items.forEach(item => {
+                const price = parseInt(item.getAttribute('data-price'), 10);
+                const capacity = parseInt(item.getAttribute('data-capacity'), 10);
+                const name = item.getAttribute('data-name').toLowerCase();
+                const roomNo = item.getAttribute('data-room').toLowerCase();
+                const facilities = item.getAttribute('data-facilities') || '';
+
+                let matchPrice = price >= minPrice && price <= maxPrice;
+                let matchCapacity = capacity >= currentCapacity;
+                let matchKeyword = !keyword || name.includes(keyword) || roomNo.includes(keyword) || facilities.includes(keyword);
+
+                let matchFac = true;
+                if (reqAirPanas && !facilities.includes('airpanas')) matchFac = false;
+                if (reqSmartTv && !facilities.includes('smarttv')) matchFac = false;
+                if (reqWifi && !facilities.includes('wifi')) matchFac = false;
+                if (reqKmDalam && !facilities.includes('kmdalam')) matchFac = false;
+                if (reqDapur && !facilities.includes('dapur')) matchFac = false;
+
+                if (matchPrice && matchCapacity && matchKeyword && matchFac) {
+                    item.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            document.getElementById('roomCountText').innerText = visibleCount + ' Unit Siap Huni';
+            const alertBox = document.getElementById('noRoomsAlert');
+            if (visibleCount === 0) {
+                alertBox.classList.remove('d-none');
+            } else {
+                alertBox.classList.add('d-none');
+            }
+        }
+
+        function sortRooms() {
+            const grid = document.getElementById('roomGrid');
+            const items = Array.from(grid.querySelectorAll('.room-item'));
+            const order = document.getElementById('sortOrder').value;
+
+            items.sort((a, b) => {
+                const priceA = parseInt(a.getAttribute('data-price'), 10);
+                const priceB = parseInt(b.getAttribute('data-price'), 10);
+                const capA = parseInt(a.getAttribute('data-capacity'), 10);
+                const capB = parseInt(b.getAttribute('data-capacity'), 10);
+                const roomA = parseInt(a.getAttribute('data-room'), 10);
+                const roomB = parseInt(b.getAttribute('data-room'), 10);
+
+                if (order === 'price_asc') return priceA - priceB;
+                if (order === 'price_desc') return priceB - priceA;
+                if (order === 'capacity_desc') return capB - capA;
+                if (order === 'room_no') return roomA - roomB;
+                return 0;
+            });
+
+            items.forEach(item => grid.appendChild(item));
+        }
+    </script>
+</body>
+</html>
