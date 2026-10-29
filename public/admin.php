@@ -3,6 +3,8 @@
 // Memanggil Layout Khusus Admin (Bukan header pengunjung)
 require_once '../app/views/layouts/admin_header.php';
 
+require_once __DIR__ . '/../config/db.php';
+
 // Memanggil Konten Dashboard Admin
 require_once '../app/views/admin/dashboard.php';
 
