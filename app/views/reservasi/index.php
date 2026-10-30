@@ -21,14 +21,16 @@
                 <p class="text-muted small">Masukkan kode referensi untuk melihat status booking</p>
             </div>
 
-            <form action="hasil_status.php" method="GET">
+            <?php if ($error): ?><div class="alert alert-danger" role="alert"><?= h($error) ?></div><?php endif; ?>
+            <form action="hasil_status.php" method="POST">
+                <input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">
                 <div class="mb-3">
                     <div class="d-flex justify-content-between align-items-end mb-1">
                         <label class="form-label small fw-bold text-dark mb-0">Kode Referensi</label>
                         <small class="text-muted" style="font-size: 0.65rem;"><i class="bi bi-ticket-detailed me-1"></i> Format resmi Villa</small>
                     </div>
                     <div class="input-group">
-                        <input type="text" class="form-control border-secondary-subtle" name="kode" value="DRJ-20261026-K201-7QF4" placeholder="Contoh: DRJ-..." required>
+                        <input type="text" class="form-control border-secondary-subtle" name="kode" placeholder="Contoh: DRJ-20261026-K201-7QF4" maxlength="50" required>
                         <span class="input-group-text bg-white border-secondary-subtle text-muted"><i class="bi bi-ticket"></i></span>
                     </div>
                 </div>

@@ -97,29 +97,6 @@ foreach ($daftarKamar as $item) {
     }
 }
 
-// Fungsi bantu ekstraksi tag fasilitas dari deskripsi kamar
-function getFasilitasKamar(string $deskripsi): array {
-    $master = [
-        ['icon' => 'bi-droplet-half', 'label' => 'Air Panas', 'pattern' => '/air panas/i'],
-        ['icon' => 'bi-tv', 'label' => 'Smart TV', 'pattern' => '/smart tv/i'],
-        ['icon' => 'bi-wifi', 'label' => 'Wi-Fi', 'pattern' => '/wi-?fi/i'],
-        ['icon' => 'bi-door-closed', 'label' => 'KM Dalam', 'pattern' => '/kamar mandi dalam|km dalam/i'],
-        ['icon' => 'bi-cup-hot', 'label' => 'Dapur Bersama', 'pattern' => '/dapur bersama|dapur/i'],
-        ['icon' => 'bi-image', 'label' => 'Pemandangan', 'pattern' => '/pemandangan|pegunungan|gunung/i'],
-    ];
-    $hasil = [];
-    foreach ($master as $m) {
-        if (preg_match($m['pattern'], $deskripsi)) {
-            $hasil[] = ['icon' => $m['icon'], 'label' => $m['label']];
-        }
-    }
-    if (empty($hasil)) {
-        $hasil[] = ['icon' => 'bi-droplet-half', 'label' => 'Air Panas'];
-        $hasil[] = ['icon' => 'bi-tv', 'label' => 'Smart TV'];
-    }
-    return $hasil;
-}
-
 // Fungsi bantu waktu relatif pembaruan kondisi kamar
 function formatWaktuRelatif(?string $datetime): string {
     if (!$datetime) return 'Kondisi diperbarui baru saja';
@@ -139,6 +116,9 @@ function formatWaktuRelatif(?string $datetime): string {
 ?>
 
 <div class="container mb-5">
+    <?php if ($error): ?>
+        <div class="alert alert-warning" role="alert"><?= h($error) ?></div>
+    <?php endif; ?>
     <!-- Bagian Hero Image -->
     <div class="hero-section" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==');">
         <div class="hero-overlay"></div>
@@ -290,6 +270,13 @@ function formatWaktuRelatif(?string $datetime): string {
                     $badgeText       = 'Perbaikan';
                     $isBisaDipesan   = false;
                     $pesanButtonText = 'Dalam Perbaikan';
+                } elseif ($statusKamar !== 'Tersedia') {
+                    $badgeClass      = 'bg-secondary';
+                    $badgeStyle      = 'background: #6c757d; color: white;';
+                    $badgeIcon       = 'bi-lock-fill';
+                    $badgeText       = 'Tidak tersedia';
+                    $isBisaDipesan   = false;
+                    $pesanButtonText = 'Tidak tersedia';
                 } elseif ($activeStatus === 'Di-Keep') {
                     $badgeClass      = 'bg-dikeep';
                     $badgeStyle      = 'background: #fd7e14; color: white;';

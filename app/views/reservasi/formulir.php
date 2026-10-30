@@ -1,176 +1,147 @@
 <section class="container mt-4 mb-5" style="max-width: 850px;">
-    <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb small mb-0">
-            <li class="breadcrumb-item"><a href="index.php" class="text-decoration-none text-muted"><i class="bi bi-arrow-left me-1"></i> Katalog</a></li>
-            <li class="breadcrumb-item"><a href="detail.php" class="text-decoration-none text-muted">Kamar 201</a></li>
-            <li class="breadcrumb-item active fw-bold text-dark" aria-current="page"><span class="text-muted fw-normal me-1">/</span> Formulir Reservasi</li>
+            <li class="breadcrumb-item"><a href="index.php" class="text-decoration-none text-muted">Katalog</a></li>
+            <li class="breadcrumb-item"><a href="detail.php?id=<?= (int)$room['id'] ?>" class="text-decoration-none text-muted"><?= h($room['nomor_kamar']) ?></a></li>
+            <li class="breadcrumb-item active fw-bold" aria-current="page">Formulir Reservasi</li>
         </ol>
     </nav>
 
-<div class="card p-4 border-0 shadow-sm rounded-4 mb-4 text-center">
-    <h6 class="text-muted fw-bold mb-3 small text-uppercase">Tahapan Reservasi</h6>
-    
-    <div class="tracker-container">
-        
-        <!-- Fase 1: Aktif saat ini -->
-        <!-- Gunakan class "completed" jika sudah lewat, atau "active" jika sedang di tahap ini -->
-        <div class="tracker-step active">
-            <div class="tracker-circle">1</div>
-            <div class="tracker-text">Pemesanan</div>
-            <small class="text-muted" style="font-size: 0.75rem;">26 Okt, 10.00</small>
-        </div>
-        
-        <!-- Fase 2: Belum Dilalui (Inactive) -->
-        <div class="tracker-step inactive">
-            <div class="tracker-circle">2</div>
-            <div class="tracker-text text-dark">Pembayaran</div>
-            <small class="text-muted" style="font-size: 0.75rem;">-</small>
-        </div>
-        
-        <!-- Fase 3: Belum Dilalui (Inactive) -->
-        <div class="tracker-step inactive">
-            <div class="tracker-circle">3</div>
-            <div class="tracker-text text-dark">Status</div>
-            <small class="text-muted" style="font-size: 0.75rem;">-</small>
-        </div>
+    <?php if ($error): ?>
+        <div class="alert alert-danger" role="alert"><?= h($error) ?></div>
+    <?php endif; ?>
 
+    <div class="card border-0 shadow-sm rounded-4 mb-4 text-center">
+        <div class="card-body p-3">
+            <h6 class="text-muted fw-bold small text-uppercase mb-3">Tahapan Reservasi</h6>
+            <div class="tracker-container">
+                <div class="tracker-step active"><div class="tracker-circle">1</div><div class="tracker-text">Pemesanan</div></div>
+                <div class="tracker-step inactive"><div class="tracker-circle">2</div><div class="tracker-text">Pembayaran</div></div>
+                <div class="tracker-step inactive"><div class="tracker-circle">3</div><div class="tracker-text">Status</div></div>
+            </div>
+        </div>
     </div>
-</div>
 
-    <!-- Formulir Utama -->
-    <div class="card border-0 shadow-sm rounded-4 mb-5">
+    <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body p-4 p-md-5">
-            <!-- Header Form -->
             <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
                 <div>
-                    <span class="badge bg-brown text-white mb-2" style="font-size: 0.65rem;">LANGKAH 1 DARI 3</span>
+                    <span class="badge bg-brown text-white mb-2">LANGKAH 1 DARI 3</span>
                     <h3 class="fw-bolder mb-0">Data Pemesan</h3>
                 </div>
-                <span class="badge bg-warning bg-opacity-10 text-brown border border-warning-subtle rounded-pill px-3 py-2"><i class="bi bi-stopwatch me-1"></i> Keep 15 Menit</span>
+                <span class="badge bg-warning bg-opacity-10 text-brown rounded-pill px-3 py-2">
+                    Keep <?= (int)get_public_settings($pdo)['batas_waktu_keep_menit'] ?> menit
+                </span>
             </div>
 
-            <!-- Ringkasan Kamar -->
-            <div class="d-flex flex-column flex-md-row gap-3 align-items-md-center bg-light bg-opacity-50 p-3 rounded border mb-4">
-                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" class="rounded" style="width: 100px; height: 80px; object-fit: cover; background-color: #E5E0D8;">
+            <div class="d-flex flex-column flex-md-row gap-3 align-items-md-center bg-light p-3 rounded border mb-4">
+                <?php if (!empty($room['foto_url']) && is_file(dirname(__DIR__, 3) . '/public' . $room['foto_url'])): ?>
+                    <img src="<?= h(ltrim($room['foto_url'], '/')) ?>" alt="Kamar <?= h($room['nomor_kamar']) ?>"
+                         class="rounded" style="width: 100px; height: 80px; object-fit: cover;">
+                <?php endif; ?>
                 <div class="flex-fill">
-                    <div class="mb-1">
-                        <span class="badge bg-white border text-brown me-1">Kamar 201</span>
-                        <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle">Tersedia</span>
-                    </div>
-                    <h6 class="fw-bold mb-1">Family Suite Panderman</h6>
-                    <div class="text-muted" style="font-size: 0.75rem;">
-                        <i class="bi bi-droplet-half me-1"></i> Air Panas &nbsp; <i class="bi bi-tv me-1"></i> Smart TV &nbsp; <i class="bi bi-wifi me-1"></i> Wi-Fi
-                    </div>
+                        <span class="badge bg-white border text-brown">Kamar <?= h($room['nomor_kamar']) ?></span>
+                        <h5 class="fw-bold mt-2 mb-1"><?= h($room['tipe_kamar']) ?></h5>
+                        <small class="text-muted">Maksimal <?= (int)$room['kapasitas'] ?> tamu · Rp <?= number_format((float)$room['harga_per_malam'], 0, ',', '.') ?>/malam</small>
                 </div>
-                <div class="text-md-end border-start-md ps-md-4 mt-3 mt-md-0">
-                    <small class="text-muted d-block" style="font-size: 0.7rem;">Total pembayaran</small>
-                    <h5 class="fw-bolder text-brown mb-0">Rp 1.700.000</h5>
-                    <small class="text-muted" style="font-size: 0.7rem;">2 malam - Dibayar penuh</small>
+                <div class="text-md-end">
+                    <small class="text-muted d-block">Estimasi total</small>
+                    <strong class="text-brown fs-5" id="bookingEstimate">Rp <?= number_format((float)$room['harga_per_malam'] * max(1, (int)ceil($duration / 24)), 0, ',', '.') ?></strong>
                 </div>
             </div>
 
-            <!-- Form Input -->
             <form action="keep.php" method="POST">
-                <div class="row g-3 mb-4">
+                <input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">
+                <input type="hidden" name="kamar_id" value="<?= (int)$room['id'] ?>">
+                <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label small fw-bold text-dark mb-1">Nama Lengkap *</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-secondary-subtle text-muted"><i class="bi bi-person"></i></span>
-                            <input type="text" class="form-control border-secondary-subtle" name="nama" value="Budi Wijaya" required>
-                        </div>
-                        <small class="text-muted mt-1 d-block" style="font-size: 0.65rem;">Minimal 3 karakter. Dipakai untuk mengenali pesananmu saat check-in.</small>
+                        <label for="nama" class="form-label fw-semibold">Nama lengkap</label>
+                        <input id="nama" name="nama" class="form-control" maxlength="100" minlength="3" autocomplete="name" required>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label small fw-bold text-dark mb-1">Nomor WhatsApp *</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-secondary-subtle text-brown fw-semibold">+62</span>
-                            <input type="text" class="form-control border-secondary-subtle" name="whatsapp" value="81278901234" required>
-                        </div>
-                        <small class="text-muted mt-1 d-block" style="font-size: 0.65rem;">Dipakai pengelola untuk menghubungi bila diperlukan.</small>
+                        <label for="whatsapp" class="form-label fw-semibold">Nomor WhatsApp</label>
+                        <input id="whatsapp" name="whatsapp" class="form-control" inputmode="tel" autocomplete="tel" placeholder="081234567890" required>
+                        <small class="text-muted">Gunakan nomor yang aktif.</small>
                     </div>
-                </div>
-
-                <!-- Kartu Tanggal -->
-                <div class="drj-date-wrap mb-4">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <div class="drj-date-card">
-                                <div class="drj-date-icon"><i class="bi bi-box-arrow-in-right"></i></div>
-                                <div class="flex-fill">
-                                    <small class="text-muted d-block" style="font-size: 0.65rem;">CHECK-IN</small>
-                                    <span class="fw-bold d-block small">26 Okt 2026</span>
+                    <div class="col-md-6">
+                        <label for="checkin" class="form-label fw-semibold">Waktu check-in</label>
+                        <input id="checkin" type="datetime-local" name="checkin" class="form-control"
+                               min="<?= h(date('Y-m-d\TH:i')) ?>" value="<?= h($checkinInput) ?>" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="durasi" class="form-label fw-semibold">Durasi</label>
+                        <select id="durasi" name="durasi_jam" class="form-select" required>
+                            <?php foreach ([3 => '3 jam', 6 => '6 jam', 12 => '12 jam', 24 => '24 jam', 48 => '48 jam', 72 => '72 jam'] as $hours => $label): ?>
+                                <option value="<?= $hours ?>" <?= $duration === $hours ? 'selected' : '' ?>><?= h($label) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold" for="guestInput">Jumlah tamu <small class="text-muted">· Maks. <?= (int)$room['kapasitas'] ?></small></label>
+                        <div class="drj-field-box">
+                            <div class="drj-guest-row">
+                                <span class="fw-semibold" id="guestLabel">1 Orang Tamu</span>
+                                <div class="drj-stepper">
+                                    <button class="btn" type="button" id="guestMinus" aria-label="Kurangi tamu">−</button>
+                                    <input id="guestInput" name="jumlah_tamu" type="number" min="1" max="<?= (int)$room['kapasitas'] ?>" value="1" required>
+                                    <button class="btn" type="button" id="guestPlus" aria-label="Tambah tamu">+</button>
                                 </div>
-                                <span class="drj-date-badge">14.00 WIB</span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="drj-date-card">
-                                <div class="drj-date-icon"><i class="bi bi-box-arrow-right"></i></div>
-                                <div class="flex-fill">
-                                    <small class="text-muted d-block" style="font-size: 0.65rem;">CHECK-OUT</small>
-                                    <span class="fw-bold d-block small">28 Okt 2026</span>
-                                </div>
-                                <span class="drj-date-badge">12.00 WIB</span>
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <small class="text-muted" style="font-size: 0.8rem;">Lama menginap: <strong>2 malam</strong></small>
-                        <a href="#" class="text-brown text-decoration-none small fw-semibold">Ubah tanggal</a>
+                    <div class="col-md-6">
+                        <label for="catatan" class="form-label fw-semibold">Catatan <span class="text-muted">(opsional)</span></label>
+                        <input id="catatan" name="catatan" class="form-control" maxlength="250">
                     </div>
                 </div>
-
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between align-items-end mb-1">
-                        <label class="form-label small fw-bold text-dark mb-0">Jumlah Tamu</label>
-                        <small class="text-muted" style="font-size: 0.65rem;">Maks 6 tamu</small>
-                    </div>
-                    <div class="drj-field-box">
-                        <div class="drj-guest-row">
-                            <div>
-                                <div class="fw-semibold text-dark" id="guestLabel">4 Orang Tamu</div>
-                                <small class="text-muted" style="font-size: 0.7rem;">Termasuk kasur &amp; fasilitas</small>
-                            </div>
-                            <div class="drj-stepper">
-                                <button class="btn" type="button" id="guestMinus">-</button>
-                                <input type="text" name="jumlah_tamu" id="guestInput" value="4" readonly>
-                                <button class="btn" type="button" id="guestPlus">+</button>
-                            </div>
-                        </div>
+                <div class="drj-date-wrap bg-light p-3 rounded mt-4">
+                    <div class="row g-2 small">
+                        <div class="col-md-6"><span class="text-muted d-block">CHECK-IN</span><strong id="summaryCheckin"><?= $checkin ? h($checkin->format('d M Y H:i')) : 'Pilih waktu di atas' ?></strong></div>
+                        <div class="col-md-6"><span class="text-muted d-block">CHECK-OUT</span><strong id="summaryCheckout"><?= $checkoutInput ? h(date('d M Y H:i', strtotime($checkoutInput))) : 'Otomatis dihitung' ?></strong></div>
                     </div>
                 </div>
-
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between align-items-end mb-1">
-                        <label class="form-label small fw-bold text-dark mb-0">Catatan <span class="text-muted fw-normal">(Opsional)</span></label>
-                        <small class="text-muted" style="font-size: 0.65rem;">Maks 250 karakter</small>
-                    </div>
-                    <div class="drj-field-box">
-                        <textarea class="form-control" name="catatan" rows="2" maxlength="250">Tiba sekitar pukul 15.30 WIB bersama keluarga.</textarea>
-                    </div>
+                <div class="alert alert-light border mt-3">
+                    Total akhir divalidasi server berdasarkan tarif kamar. Durasi dibulatkan ke atas per 24 jam. Setelah kamar dikunci, pembayaran perlu diunggah sebelum masa keep berakhir.
                 </div>
-
-    <script src="assets/js/formulir.js?v=<?= filemtime(__DIR__ . '/../../../public/assets/js/formulir.js') ?>"></script>
-
-                <!-- Persetujuan & Peringatan -->
-                <div class="bg-light border border-secondary-subtle rounded p-3 mb-3 d-flex gap-3 align-items-start">
-                    <input class="form-check-input mt-1" type="checkbox" checked required>
-                    <small class="text-muted" style="font-size: 0.8rem;">Saya memahami bahwa keep berlaku 15 menit, pembayaran dilakukan penuh (100%), dan refund hanya dapat diajukan paling lambat H-1 sampai pukul 23.59 WIB.</small>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" id="setuju" name="setuju_kebijakan" type="checkbox" value="1" required>
+                    <label class="form-check-label small" for="setuju">Saya menyetujui kebijakan pemesanan dan refund villa.</label>
                 </div>
-                <div class="bg-warning bg-opacity-10 border border-warning-subtle text-brown rounded p-3 mb-4 d-flex gap-3 align-items-center">
-                    <i class="bi bi-exclamation-circle fs-5"></i>
-                    <small style="font-size: 0.8rem;">Setelah kamar dikunci, kamu punya 15 menit untuk transfer dan mengunggah bukti. Rincian rekening tampil di langkah berikutnya.</small>
-                </div>
-
-                <!-- Tombol Submit -->
-                <button type="submit" class="btn btn-brown w-100 fw-bold py-3 mb-2 rounded-3"><i class="bi bi-lock-fill me-2"></i> Kunci Kamar & Lanjut ke Pembayaran</button>
-                <div class="text-center mb-4">
-                    <small class="text-muted" style="font-size: 0.65rem;">Kamar ditahan selama 15 menit setelah tombol ditekan.</small>
-                </div>
-                
-                <a href="detail.php" class="text-decoration-none text-muted small fw-semibold"><i class="bi bi-arrow-left me-1"></i> Kembali ke detail kamar</a>
+                <button type="submit" class="btn btn-brown w-100 fw-bold py-3"><i class="bi bi-lock-fill me-2"></i>Kunci Kamar &amp; Lanjut Pembayaran</button>
+                <div class="text-center mt-2 mb-3"><small class="text-muted">Kamar ditahan <?= (int)get_public_settings($pdo)['batas_waktu_keep_menit'] ?> menit setelah tombol ditekan.</small></div>
             </form>
         </div>
     </div>
 </section>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const guests = document.getElementById('guestInput');
+    const label = document.getElementById('guestLabel');
+    const checkin = document.getElementById('checkin');
+    const duration = document.getElementById('durasi');
+    const checkoutSummary = document.getElementById('summaryCheckout');
+    const checkinSummary = document.getElementById('summaryCheckin');
+    const estimate = document.getElementById('bookingEstimate');
+    const rate = <?= json_encode((float)$room['harga_per_malam']) ?>;
+    function updateGuests(value) {
+        const max = Number(guests.max) || 1;
+        guests.value = Math.max(1, Math.min(max, value));
+        label.textContent = guests.value + (Number(guests.value) === 1 ? ' Orang Tamu' : ' Orang Tamu');
+    }
+    document.getElementById('guestMinus').addEventListener('click', () => updateGuests(Number(guests.value) - 1));
+    document.getElementById('guestPlus').addEventListener('click', () => updateGuests(Number(guests.value) + 1));
+    function updateSchedule() {
+        const start = new Date(checkin.value);
+        const hours = Number(duration.value);
+        if (!checkin.value || Number.isNaN(start.getTime()) || !hours) return;
+        const end = new Date(start.getTime() + hours * 3600000);
+        const fmt = new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        checkinSummary.textContent = fmt.format(start);
+        checkoutSummary.textContent = fmt.format(end);
+        estimate.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(rate * Math.ceil(hours / 24));
+    }
+    checkin.addEventListener('change', updateSchedule);
+    duration.addEventListener('change', updateSchedule);
+    updateSchedule();
+});
+</script>
