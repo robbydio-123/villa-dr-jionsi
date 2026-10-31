@@ -20,7 +20,7 @@ if (!$room) {
 $checkinInput = trim((string)($_GET['checkin'] ?? ''));
 $checkin = booking_datetime($checkinInput);
 $duration = filter_input(INPUT_GET, 'durasi', FILTER_VALIDATE_INT) ?: 24;
-$duration = in_array($duration, [3, 6, 12, 24, 48, 72], true) ? $duration : 24;
+$duration = valid_duration_hours((int)$duration) ? (int)$duration : 24;
 $checkout = $checkin ? $checkin->modify('+' . $duration . ' hours') : null;
 $available = $room['status'] === 'Tersedia';
 if ($available && $checkin && $checkout) {
@@ -39,6 +39,7 @@ if ($available && $checkin && $checkout) {
     ]);
     $available = filter_var($availability->fetchColumn(), FILTER_VALIDATE_BOOLEAN);
 }
+$packagePrices = short_package_prices($pdo);
 $settings = get_public_settings($pdo);
 $pageTitle = 'Kamar ' . $room['nomor_kamar'] . ' - ' . $room['tipe_kamar'];
 require_once __DIR__ . '/../app/views/layouts/header.php';

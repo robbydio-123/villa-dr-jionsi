@@ -39,9 +39,7 @@ $historyStmt = $pdo->prepare("
 ");
 $historyStmt->execute(['id' => $booking['id']]);
 $statusHistory = $historyStmt->fetchAll();
-$refundDeadline = (new DateTimeImmutable((string)$booking['waktu_checkin']))
-    ->modify('-' . max(0, (int)$settings['batas_refund_hari_sebelum']) . ' days')
-    ->setTime(23, 59, 59);
+$refundDeadline = refund_deadline($booking, $settings);
 $canRefund = $booking['status_booking'] === 'Dibayar'
     && $booking['status_verifikasi'] === 'Terverifikasi'
     && (empty($booking['refund_id']) || $booking['refund_status'] === 'Ditolak')

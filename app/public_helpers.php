@@ -13,6 +13,34 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
+const DURATION_PACKAGES  = [3, 6, 12, 24];
+const MAX_BOOKING_NIGHTS = 30;
+
+function valid_duration_hours(int $hours): bool
+{
+    if (in_array($hours, DURATION_PACKAGES, true)) {
+        return true;
+    }
+    return $hours > 24 && $hours % 24 === 0 && $hours <= MAX_BOOKING_NIGHTS * 24;
+}
+
+function short_package_prices(PDO $pdo): array
+{
+    $rows = $pdo->query('SELECT durasi_jam, harga FROM harga_paket_jam')->fetchAll(PDO::FETCH_KEY_PAIR);
+    return array_map('floatval', $rows);
+}
+
+function booking_total(float $nightRate, int $hours, array $shortPrices): float
+{
+    if ($hours >= 24) {
+        return intdiv($hours, 24) * $nightRate; // 24 jam = 1 malam, 48 jam = 2 malam, dst.
+    }
+    if (!isset($shortPrices[$hours])) {
+        throw new DomainException('Harga untuk durasi ini belum diatur. Silakan hubungi pengelola.');
+    }
+    return $shortPrices[$hours];
+}
+
 function h($value): string
 {
     return htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -232,7 +260,7 @@ function create_booking(PDO $pdo): int
     $note = trim((string)($_POST['catatan'] ?? ''));
     $checkin = booking_datetime((string)($_POST['checkin'] ?? ''));
 
-    if (!$roomId || !$duration || $duration < 1 || $duration > 720
+    if (!$roomId || !$duration || !valid_duration_hours((int)$duration)
         || !$guests || $guests < 1 || text_length($name) < 3 || text_length($name) > 100
         || !preg_match('/^\+?\d{9,15}$/', $phone) || text_length($note) > 250
         || !isset($_POST['setuju_kebijakan'])) {
@@ -264,8 +292,7 @@ function create_booking(PDO $pdo): int
 
         $settings = get_public_settings($pdo);
         $keepMinutes = max(1, (int)$settings['batas_waktu_keep_menit']);
-        $nights = max(1, (int)ceil($duration / 24));
-        $total = $nights * (float)$room['harga_per_malam'];
+        $total = booking_total((float)$room['harga_per_malam'], (int)$duration, short_package_prices($pdo));
         $roomCode = preg_replace('/[^A-Za-z0-9]/', '', (string)$room['nomor_kamar']);
         $insert = $pdo->prepare("
             INSERT INTO reservasi
@@ -432,6 +459,14 @@ function store_payment_proof(PDO $pdo, array $booking): void
     }
 }
 
+function refund_deadline(array $booking, array $settings): DateTimeImmutable
+{
+    $days = max(0, (int)$settings['batas_refund_hari_sebelum']);
+    $deadline = (new DateTimeImmutable((string)$booking['created_at']))->modify('+' . $days . ' days');
+    $checkin  = new DateTimeImmutable((string)$booking['waktu_checkin']);
+    return $deadline < $checkin ? $deadline : $checkin;
+}
+
 function submit_refund(PDO $pdo, array $booking): void
 {
     verify_csrf();
@@ -447,8 +482,8 @@ function submit_refund(PDO $pdo, array $booking): void
     }
 
     $settings = get_public_settings($pdo);
-    $checkin = new DateTimeImmutable((string)$booking['waktu_checkin']);
-    $deadline = $checkin->modify('-' . max(0, (int)$settings['batas_refund_hari_sebelum']) . ' days')->setTime(23, 59, 59);
+    $deadline = refund_deadline($booking, $settings);
+    
     if (new DateTimeImmutable('now') > $deadline) {
         throw new DomainException('Batas pengajuan refund telah lewat.');
     }

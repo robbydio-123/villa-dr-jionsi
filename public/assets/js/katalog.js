@@ -1,10 +1,7 @@
-/**
- * public/assets/js/katalog.js
- * Logika interaktif pencarian kamar, kalkulasi otomatis waktu check-out, sortir, dan filter fasilitas (Native JS)
- */
+
 document.addEventListener('DOMContentLoaded', function () {
     const checkinInput   = document.getElementById('waktuCheckin');
-    const durasiSelect   = document.getElementById('durasiSewa');
+    const durasiSelect   = document.getElementById('durasiSewaJam');
     const checkoutInput  = document.getElementById('waktuCheckout');
     const btnMinus       = document.getElementById('btnMinusTamu');
     const btnPlus        = document.getElementById('btnPlusTamu');
@@ -14,9 +11,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const facilityChecks = document.querySelectorAll('.filter-facility-check');
     const roomCards      = document.querySelectorAll('.room-card-item');
 
-    /**
-     * Format objek Date ke format string "YYYY-MM-DDTHH:mm" untuk <input type="datetime-local">
-     */
     function formatDateTimeLocal(date) {
         const pad = (n) => String(n).padStart(2, '0');
         const year    = date.getFullYear();
@@ -27,16 +21,11 @@ document.addEventListener('DOMContentLoaded', function () {
         return `${year}-${month}-${day}T${hours}:${minutes}`;
     }
 
-    // 1. Batasi waktu check-in minimum ke waktu sekarang jika input masih kosong
     if (checkinInput) {
         const now = new Date();
         checkinInput.min = formatDateTimeLocal(now);
     }
 
-    /**
-     * 2. Hitung Waktu Check-out Otomatis:
-     *    Waktu Check-out = Waktu Check-in + Durasi (jam)
-     */
     function hitungCheckout() {
         if (!checkinInput || !durasiSelect || !checkoutInput) return;
 
@@ -52,7 +41,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        // Jangan hapus jika sudah ada nilai awal dari server (misal saat reload)
         if (!checkinVal || !durasiJam) {
             checkoutInput.value = '';
         }
@@ -67,9 +55,6 @@ document.addEventListener('DOMContentLoaded', function () {
         durasiSelect.addEventListener('change', hitungCheckout);
     }
 
-    /**
-     * 3. Interaksi Tombol Kapasitas Tamu (- dan +)
-     */
     if (btnMinus && btnPlus && labelKapasitas && inputKapasitas) {
         const MIN_TAMU  = 1;
         const MAKS_TAMU = 10;
@@ -95,9 +80,6 @@ document.addEventListener('DOMContentLoaded', function () {
         updateKapasitas(jumlah);
     }
 
-    /**
-     * 4. Dropdown Sortir Kamar (Otomatis reload dengan param sort)
-     */
     if (selectUrutkan) {
         selectUrutkan.addEventListener('change', function () {
             const url = new URL(window.location.href);
@@ -106,9 +88,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    /**
-     * 5. Filter Cepat Fasilitas (Client-side instan tanpa reload)
-     */
     if (facilityChecks.length > 0 && roomCards.length > 0) {
         function filterByFacilities() {
             const selected = Array.from(facilityChecks)
@@ -125,7 +104,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     cardFacilities = JSON.parse(card.dataset.facilities || '[]').map(f => f.toLowerCase());
                 } catch (e) {}
 
-                // Cek apakah semua fasilitas yang dicentang dimiliki kamar
                 const match = selected.every(sel => cardFacilities.some(cf => cf.includes(sel)));
                 card.style.display = match ? '' : 'none';
             });
@@ -136,7 +114,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Hitung checkout jika check-in dan durasi sudah terisi
     if (checkinInput && durasiSelect && checkinInput.value && durasiSelect.value) {
         hitungCheckout();
     }

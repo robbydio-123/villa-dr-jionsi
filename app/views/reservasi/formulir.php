@@ -46,7 +46,7 @@
                 </div>
                 <div class="text-md-end">
                     <small class="text-muted d-block">Estimasi total</small>
-                    <strong class="text-brown fs-5" id="bookingEstimate">Rp <?= number_format((float)$room['harga_per_malam'] * max(1, (int)ceil($duration / 24)), 0, ',', '.') ?></strong>
+                    <strong class="text-brown fs-5" id="bookingEstimate">Rp <?= number_format(booking_total((float)$room['harga_per_malam'], (int)$duration, $packagePrices), 0, ',', '.') ?></strong>
                 </div>
             </div>
 
@@ -69,12 +69,8 @@
                                min="<?= h(date('Y-m-d\TH:i')) ?>" value="<?= h($checkinInput) ?>" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="durasi" class="form-label fw-semibold">Durasi</label>
-                        <select id="durasi" name="durasi_jam" class="form-select" required>
-                            <?php foreach ([3 => '3 jam', 6 => '6 jam', 12 => '12 jam', 24 => '24 jam', 48 => '48 jam', 72 => '72 jam'] as $hours => $label): ?>
-                                <option value="<?= $hours ?>" <?= $duration === $hours ? 'selected' : '' ?>><?= h($label) ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                        <label for="durasiPaket" class="form-label fw-semibold">Durasi</label>
+                        <?php $pickerId = 'durasi'; $pickerName = 'durasi_jam'; $pickerSmall = false; $pickerPlaceholder = false; require __DIR__ . '/../partials/durasi_picker.php'; ?>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold" for="guestInput">Jumlah tamu <small class="text-muted">· Maks. <?= (int)$room['kapasitas'] ?></small></label>
@@ -118,11 +114,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const guests = document.getElementById('guestInput');
     const label = document.getElementById('guestLabel');
     const checkin = document.getElementById('checkin');
-    const duration = document.getElementById('durasi');
+    const duration = document.getElementById('durasiJam');
     const checkoutSummary = document.getElementById('summaryCheckout');
     const checkinSummary = document.getElementById('summaryCheckin');
     const estimate = document.getElementById('bookingEstimate');
     const rate = <?= json_encode((float)$room['harga_per_malam']) ?>;
+    const shortPrices = <?= json_encode($packagePrices) ?>; // harga paket 3/6/12 jam
+    function priceFor(hours) {
+        if (hours >= 24) return rate * Math.floor(hours / 24);
+        return shortPrices[hours] ?? null;
+    }
     function updateGuests(value) {
         const max = Number(guests.max) || 1;
         guests.value = Math.max(1, Math.min(max, value));
@@ -138,7 +139,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const fmt = new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
         checkinSummary.textContent = fmt.format(start);
         checkoutSummary.textContent = fmt.format(end);
-        estimate.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(rate * Math.ceil(hours / 24));
+        const price = priceFor(hours);
+        estimate.textContent = price === null ? '-' : 'Rp ' + new Intl.NumberFormat('id-ID').format(price);
     }
     checkin.addEventListener('change', updateSchedule);
     duration.addEventListener('change', updateSchedule);

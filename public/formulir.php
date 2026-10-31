@@ -16,8 +16,9 @@ if (!$room) {
 $checkinInput = trim((string)($_GET['checkin'] ?? ''));
 $checkin = booking_datetime($checkinInput);
 $duration = filter_input(INPUT_GET, 'durasi', FILTER_VALIDATE_INT);
-$duration = in_array($duration, [3, 6, 12, 24, 48, 72], true) ? $duration : 24;
+$duration = valid_duration_hours((int)$duration) ? (int)$duration : 24;
 $checkoutInput = $checkin ? $checkin->modify('+' . $duration . ' hours')->format('Y-m-d\TH:i') : '';
+$packagePrices = short_package_prices($pdo);
 $error = take_public_error();
 $pageTitle = 'Formulir Reservasi - Villa D-R Jionsi';
 require_once __DIR__ . '/../app/views/layouts/header.php';

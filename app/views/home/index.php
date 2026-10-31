@@ -5,6 +5,9 @@ $pdo = db();
 // Tangkap parameter filter & pencarian
 $filterCheckin   = trim($_GET['checkin'] ?? '');
 $filterDurasi    = (int)($_GET['durasi'] ?? 0);
+if (!valid_duration_hours($filterDurasi)) {
+    $filterDurasi = 0;
+}
 $filterCheckout  = trim($_GET['checkout'] ?? '');
 $filterKapasitas = (int)($_GET['kapasitas'] ?? 0);
 $filterSort      = trim($_GET['sort'] ?? 'harga_asc');
@@ -146,14 +149,8 @@ function formatWaktuRelatif(?string $datetime): string {
 
             <!-- Durasi Sewa -->
             <div class="col-6 col-md-2">
-                <label for="durasiSewa" class="form-label small fw-bold text-muted mb-1"><i class="bi bi-stopwatch me-1"></i> DURASI</label>
-                <select id="durasiSewa" name="durasi" class="form-select form-select-sm border-secondary-subtle">
-                    <option value="" <?= $filterDurasi === 0 ? 'selected' : '' ?> disabled>Pilih Jam</option>
-                    <option value="3" <?= $filterDurasi === 3 ? 'selected' : '' ?>>3 Jam (Transit)</option>
-                    <option value="6" <?= $filterDurasi === 6 ? 'selected' : '' ?>>6 Jam (Half Day)</option>
-                    <option value="12" <?= $filterDurasi === 12 ? 'selected' : '' ?>>12 Jam</option>
-                    <option value="24" <?= $filterDurasi === 24 ? 'selected' : '' ?>>24 Jam (Full Day)</option>
-                </select>
+                <label for="durasiSewaPaket" class="form-label small fw-bold text-muted mb-1"><i class="bi bi-stopwatch me-1"></i> DURASI</label>
+                <?php $pickerId = 'durasiSewa'; $pickerName = 'durasi'; $duration = $filterDurasi; $pickerSmall = true; $pickerPlaceholder = true; require __DIR__ . '/../partials/durasi_picker.php'; ?>
             </div>
 
             <!-- Waktu Check-out (Otomatis Dihitung via JS Native) -->

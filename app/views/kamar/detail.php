@@ -39,18 +39,24 @@
                 <div class="drj-price text-brown fw-bolder fs-3">
                     Rp <?= number_format((float)$room['harga_per_malam'], 0, ',', '.') ?> <small class="fs-6 text-muted">/ malam</small>
                 </div>
+                <?php if (!empty($packagePrices)): ?>
+                    <ul class="list-unstyled small text-muted mb-0 mt-2">
+                        <?php foreach ($packagePrices as $hours => $price): ?>
+                            <li><?= (int)$hours ?> jam: <strong>Rp <?= number_format((float)$price, 0, ',', '.') ?></strong></li>
+                        <?php endforeach; ?>
+                        <li>24 jam / 1 malam: <strong>Rp <?= number_format((float)$room['harga_per_malam'], 0, ',', '.') ?></strong></li>
+                    </ul>
+                <?php endif; ?>
 
                 <form action="detail.php" method="GET" class="border-top mt-3 pt-3">
                     <input type="hidden" name="id" value="<?= (int)$room['id'] ?>">
                     <label class="form-label small fw-bold" for="detailCheckin">PILIH JADWAL MENGINAP</label>
                     <input type="datetime-local" id="detailCheckin" name="checkin" class="form-control mb-2"
                            min="<?= h(date('Y-m-d\TH:i')) ?>" value="<?= h($checkin ? $checkin->format('Y-m-d\TH:i') : '') ?>">
-                    <div class="d-flex gap-2">
-                        <select name="durasi" id="detailDuration" class="form-select">
-                            <?php foreach ([3 => '3 jam', 6 => '6 jam', 12 => '12 jam', 24 => '24 jam', 48 => '48 jam', 72 => '72 jam'] as $hours => $label): ?>
-                                <option value="<?= $hours ?>" <?= $duration === $hours ? 'selected' : '' ?>><?= h($label) ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                    <div class="d-flex gap-2 align-items-start">
+                        <div class="flex-fill">
+                    <?php $pickerId = 'detailDuration'; $pickerName = 'durasi'; $pickerSmall = false; $pickerPlaceholder = false; require __DIR__ . '/../partials/durasi_picker.php'; ?>
+                        </div>
                         <button class="btn btn-outline-secondary" type="submit">Cek</button>
                     </div>
                     <?php if ($checkin && $checkout): ?>

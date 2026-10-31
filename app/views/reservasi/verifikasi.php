@@ -177,7 +177,7 @@
                             <i class="bi bi-arrow-counterclockwise text-brown"></i>
                             <h6 class="fw-bold small mb-0">Batas Waktu Pengajuan Refund</h6>
                         </div>
-                        <p class="small text-muted mb-0" style="font-size: 0.75rem;">Pembatalan dengan pengembalian dana 100% dapat diajukan via WhatsApp pengelola paling lambat <strong>25 Okt 2026, pukul 23.59 WIB</strong> (H-1 sebelum tanggal check-in).</p>
+<p class="small text-muted mb-0" style="font-size: 0.75rem;">Pembatalan dengan pengembalian dana 100% dapat diajukan paling lambat <strong>1 hari (24 jam) setelah pemesanan dibuat</strong> (H-1 sejak pemesanan), dan sebelum waktu check-in.</p>
                     </div>
                 </div>
                 <div class="col-md-6">

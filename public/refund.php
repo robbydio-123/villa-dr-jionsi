@@ -24,9 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $settings = get_public_settings($pdo);
-$refundDeadline = (new DateTimeImmutable((string)$booking['waktu_checkin']))
-    ->modify('-' . max(0, (int)$settings['batas_refund_hari_sebelum']) . ' days')
-    ->setTime(23, 59, 59);
+$refundDeadline = refund_deadline($booking, $settings);
 $pageTitle = 'Ajukan Refund - Villa D-R Jionsi';
 require_once __DIR__ . '/../app/views/layouts/header.php';
 require __DIR__ . '/../app/views/reservasi/refund.php';
