@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../app/admin_auth.php';
+require_admin();
 // public/admin.php
 // Memanggil Layout Khusus Admin (Bukan header pengunjung)
 require_once '../app/views/layouts/admin_header.php';
