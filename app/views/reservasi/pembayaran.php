@@ -58,6 +58,14 @@
                     <h5 class="fw-bold">Pembayaran QRIS</h5>
                     <?php if ($activeQris && is_file(dirname(__DIR__, 3) . '/public' . $activeQris)): ?>
                         <img src="<?= h(ltrim($activeQris, '/')) ?>" alt="QRIS pembayaran Villa" class="img-fluid my-2" style="max-width: 240px;">
+                        <div class="mb-3">
+                            <a href="<?= h(ltrim($activeQris, '/')) ?>"
+                               download="QRIS-Villa-DR-Jionsi.<?= h(pathinfo($activeQris, PATHINFO_EXTENSION) ?: 'jpg') ?>"
+                               class="btn btn-sm btn-brown fw-semibold">
+                                <i class="bi bi-download me-1"></i>Unduh QRIS
+                            </a>
+                            <small class="text-muted d-block mt-1">Jika tidak terunduh otomatis, tekan lama gambar QRIS lalu pilih &ldquo;Simpan gambar&rdquo;.</small>
+                        </div>
                     <?php else: ?>
                         <div class="alert alert-warning mb-2">QRIS belum tersedia. Silakan hubungi pengelola untuk menyelesaikan pembayaran.</div>
                     <?php endif; ?>

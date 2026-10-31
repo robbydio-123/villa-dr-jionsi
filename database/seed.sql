@@ -32,8 +32,8 @@ ON CONFLICT (id) DO UPDATE SET
 -- QRIS (yang lama nonaktif, yang baru aktif)
 -- ---------------------------------------------------------------------
 INSERT INTO qris_statis (gambar, aktif, diunggah_oleh, created_at) VALUES
-('/uploads/qris/qris-lama.png',  FALSE, 1, CURRENT_TIMESTAMP - INTERVAL '60 days'),
-('/uploads/qris/qris-aktif.png', TRUE,  1, CURRENT_TIMESTAMP - INTERVAL '10 days');
+('/assets/img/Qris-lama.jpeg',  FALSE, 1, CURRENT_TIMESTAMP - INTERVAL '60 days'),
+('/assets/img/Qris.jpeg', TRUE,  1, CURRENT_TIMESTAMP - INTERVAL '10 days');
 
 -- ---------------------------------------------------------------------
 -- Kamar (6 unit)
