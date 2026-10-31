@@ -1,5 +1,4 @@
 <?php
-// Mendapatkan nama file yang sedang diakses (misal: admin.php atau admin_reservasi.php)
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 <!DOCTYPE html>
@@ -19,7 +18,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <div class="admin-wrapper">
 
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
-        <!-- SIDEBAR KIRI -->
         <aside class="admin-sidebar">
             <div class="sidebar-brand">
                 <div>
@@ -55,16 +53,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </div>
 
             <div class="sidebar-footer">
-                <a href="index.php" class="text-decoration-none text-light d-flex align-items-center gap-2 mb-3"><i class="bi bi-box-arrow-left"></i> Logout</a>
+                <a href="logout.php" class="text-decoration-none text-light d-flex align-items-center gap-2 mb-3"><i class="bi bi-box-arrow-left"></i> Logout</a>
                 <div>&copy; 2026 D-R Jionsi Batu</div>
             </div>
         </aside>
 
-        <!-- AREA KANAN UTAMA -->
         <main class="admin-main">
-            <!-- TOPBAR -->
             <header class="admin-topbar">
-                <!-- Tombol Hamburger (Hanya muncul di HP) -->
+                <!-- Tombol Hamburger -->
                 <button class="btn btn-light border-0 me-2 btn-sidebar-toggle" id="sidebarToggle">
                     <i class="bi bi-list fs-4"></i>
                 </button>
@@ -85,7 +81,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="text-end d-none d-md-block">
-                            <h6 class="mb-0 fw-bold small">Bpk. Hendra</h6>
+                            <h6 class="mb-0 fw-bold small"><?= htmlspecialchars((string)($_SESSION['admin_nama'] ?? 'Pengelola'), ENT_QUOTES, 'UTF-8') ?></h6>
                             <small class="text-muted" style="font-size: 0.7rem;">Pengelola Villa</small>
                         </div>
                         <div class="rounded-circle bg-brown text-white d-flex align-items-center justify-content-center fw-bold" style="width: 40px; height: 40px;">
