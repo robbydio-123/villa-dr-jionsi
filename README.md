@@ -134,8 +134,7 @@ Buat database (nama sesuai isi `.env`), lalu impor skema.
 3. Lalu setelah terbuka klik icon folder, maka lanjut untuk klik file sql dari folder dr-jionshi (shcema,seed,harga_paket, disini klik salah satu dulu ya)
 4. Setelah itu akan muncul kumpulan perintah dan juga query, langsung aja kalian execute query. 
 5. Lakukan langkah 2-4 berulang sampai semuanya file sql udah ke execute.
-6. Setelah selesai maka lanjut untuk mengetikkan query ini untuk merubah nama dari Qris yang aktif: 
-
+6. Setelah selesai maka lanjut untuk mengetikkan query ini untuk merubah nama dari Qris yang aktif: UPDATE qris_statis SET gambar = '/assets/img/Qris.jpeg' WHERE aktif = TRUE;
 ```
 
 Cek di DBeaver bahwa tabel sudah terbentuk dan terisi.
