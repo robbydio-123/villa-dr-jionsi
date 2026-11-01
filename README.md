@@ -128,11 +128,14 @@ Di Windows PowerShell: `Copy-Item .env.example .env`. Isi `.env` dengan data Pos
 
 ### 3. Buat dan isi database
 
-Buat database (nama sesuai isi `.env`), lalu impor skema dan data awal dengan `psql`:
+Buat database (nama sesuai isi `.env`), lalu impor skema.
+1. Pertama setelah berhasl mengambil folder dr-jionsi langkah selanjutnya adalah membuka pgAdmin dan buat database baru bernama "jionsi_db"
+2. Klik kanan dan scroll sampe ketemu "Query Tool"
+3. Lalu setelah terbuka klik icon folder, maka lanjut untuk klik file sql dari folder dr-jionshi (shcema,seed,harga_paket, disini klik salah satu dulu ya)
+4. Setelah itu akan muncul kumpulan perintah dan juga query, langsung aja kalian execute query. 
+5. Lakukan langkah 2-4 berulang sampai semuanya file sql udah ke execute.
+6. Setelah selesai maka lanjut untuk mengetikkan query ini untuk merubah nama dari Qris yang aktif: 
 
-```bash
-psql -U postgres -d nama_database -f database/schema.sql
-psql -U postgres -d nama_database -f database/seed.sql
 ```
 
 Cek di DBeaver bahwa tabel sudah terbentuk dan terisi.
