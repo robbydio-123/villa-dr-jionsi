@@ -5,18 +5,28 @@ if (!empty($_SESSION['admin_id'])) {
     redirect_to('admin.php');
 }
 
-$error = null;
+$pdo      = db();
+$username = '';
+$galat    = false;   
+$sesiHabis = (($_GET['sesi'] ?? '') === 'habis');
+$sisaKunci = login_sisa_kunci($pdo);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf();
-    $wa = trim((string)($_POST['nomor_whatsapp'] ?? ''));
-    $pw = (string)($_POST['password'] ?? '');
+    $username = trim((string)($_POST['username'] ?? ''));
+    $pw       = (string)($_POST['password'] ?? '');
+    $ingat    = !empty($_POST['ingat']);
 
-    if (admin_login(db(), $wa, $pw)) {
+    $hasil = admin_login($pdo, $username, $pw, $ingat);
+    if ($hasil === 'ok') {
         redirect_to('admin.php');
     }
-    $error = 'Nomor WhatsApp atau kata sandi salah.';
+    $galat     = ($hasil === 'gagal');
+    $sisaKunci = login_sisa_kunci($pdo);
+    $sesiHabis = false;
 }
 
-require_once '../app/views/layouts/header.php';
-require_once '../app/views/admin/login.php';
-require_once '../app/views/layouts/footer.php';
+$terkunci  = $sisaKunci > 0;
+$pageTitle = 'Portal Pengelola - Villa D-R Jionsi';
+
+require_once __DIR__ . '/../app/views/admin/login.php';

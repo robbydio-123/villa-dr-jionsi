@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../config/db.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
+    ini_set('session.gc_maxlifetime', (string)(14 * 86400));   
     session_set_cookie_params([
         'httponly' => true,
         'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
