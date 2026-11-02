@@ -12,10 +12,11 @@ Proyek ini dikerjakan oleh Kelompok 3 SIB-2B sebagai Project-Based Learning (PBL
 4. [Daftar Halaman](#daftar-halaman)
 5. [Kebutuhan Sistem](#kebutuhan-sistem)
 6. [Instalasi dan Menjalankan Aplikasi](#instalasi-dan-menjalankan-aplikasi)
-7. [Keamanan dan Konvensi Kode](#keamanan-dan-konvensi-kode)
-8. [Panduan Kerja Tim](#panduan-kerja-tim)
-9. [Format Pesan Commit](#format-pesan-commit)
-10. [Tim Pengembang](#tim-pengembang)
+7. [Troubleshooting Database](#troubleshooting-database)
+8. [Keamanan dan Konvensi Kode](#keamanan-dan-konvensi-kode)
+9. [Panduan Kerja Tim](#panduan-kerja-tim)
+10. [Format Pesan Commit](#format-pesan-commit)
+11. [Tim Pengembang](#tim-pengembang)
 
 ## Fitur Utama
 
@@ -48,6 +49,8 @@ villa-dr-jionsi/
 │
 ├── app/
 │   ├── public_helpers.php  # Fungsi bantu yang dipakai halaman publik
+│   ├── admin_auth.php      # Login admin, sesi, dan penguncian login gagal
+│   ├── admin_settings.php  # Fungsi bantu pengaturan villa
 │   └── views/              # Potongan tampilan yang dipakai bersama
 │       ├── layouts/        # Header, navbar, footer
 │       ├── home/           # Bagian beranda
@@ -60,13 +63,15 @@ villa-dr-jionsi/
 │   └── db.php              # Koneksi PDO ke PostgreSQL
 │
 ├── database/
-│   ├── schema.sql          # Skema tabel
-│   └── seed.sql            # Data awal
+│   ├── schema.sql          # Skema tabel (jalankan pertama)
+│   ├── seed.sql            # Data awal: admin, kamar, QRIS, contoh reservasi
+│   ├── harga_paket.sql     # Tabel harga paket per jam + harga kamar
+│   └── migrasi_login.sql   # HANYA untuk database lama (lihat Troubleshooting)
 │
 └── public/                 # Satu-satunya folder yang diakses browser
     ├── *.php               # Halaman (lihat Daftar Halaman)
     └── assets/
-        ├── css/            # style.css, refund.css
+        ├── css/            # style.css
         ├── js/             # formulir.js, katalog.js, navbar.js, refund_tamu.js, refund_admin.js
         └── img/            # Logo dan gambar
 ```
@@ -124,20 +129,59 @@ cd villa-dr-jionsi
 cp .env.example .env
 ```
 
-Di Windows PowerShell: `Copy-Item .env.example .env`. Isi `.env` dengan data PostgreSQL di laptopmu (host, port, nama database, pengguna, password). Berkas `.env` tidak boleh di-commit. Dan hilangkan tulisan examplenya.
+Di Windows PowerShell: `Copy-Item .env.example .env`. Buka `.env` lalu sesuaikan dengan PostgreSQL di laptopmu:
+
+```ini
+APP_ENV=development
+APP_TIMEZONE=Asia/Jakarta
+
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=jionsi_db
+DB_USER=postgres
+DB_PASS=isi_password_postgres_kamu
+```
+
+Berkas `.env` tidak boleh di-commit. Pastikan `DB_NAME` sama dengan nama database yang dibuat di langkah 3.
 
 ### 3. Buat dan isi database
 
-Buat database (nama sesuai isi `.env`), lalu impor skema.
-1. Pertama setelah berhasl mengambil folder dr-jionsi langkah selanjutnya adalah membuka pgAdmin dan buat database baru bernama "jionsi_db"
-2. Klik kanan dan scroll sampe ketemu "Query Tool"
-3. Lalu setelah terbuka klik icon folder, maka lanjut untuk klik file sql dari folder dr-jionshi (shcema,seed,harga_paket, disini klik salah satu dulu ya)
-4. Setelah itu akan muncul kumpulan perintah dan juga query, langsung aja kalian execute query. 
-5. Lakukan langkah 2-4 berulang sampai semuanya file sql udah ke execute.
-6. Setelah selesai maka lanjut untuk mengetikkan query ini untuk merubah nama dari Qris yang aktif: UPDATE qris_statis SET gambar = '/assets/img/Qris.jpeg' WHERE aktif = TRUE;
+Database dibuat dari **tiga berkas SQL di folder `database/`, dijalankan berurutan**. Urutan ini penting karena berkas berikutnya memakai tabel dari berkas sebelumnya.
+
+| Urutan | Berkas | Fungsi |
+|---|---|---|
+| 1 | `schema.sql` | Membuat semua tabel (`admin_users`, `login_percobaan`, `pengaturan_villa`, `qris_statis`, `kamar`, `reservasi`, `pembayaran`, `refund`, `log_status_reservasi`) |
+| 2 | `seed.sql` | Mengisi data awal: akun admin, pengaturan villa, QRIS, kamar, dan contoh reservasi |
+| 3 | `harga_paket.sql` | Membuat tabel `harga_paket_jam` dan menyamakan harga kamar |
+
+> `migrasi_login.sql` **tidak** dijalankan pada instalasi baru. Berkas itu hanya untuk memperbarui database lama (lihat bagian Troubleshooting).
+
+**Lewat pgAdmin:**
+
+1. Buka pgAdmin, klik kanan **Databases**, pilih **Create > Database**, beri nama `jionsi_db`, lalu simpan.
+2. Klik kanan `jionsi_db`, pilih **Query Tool**.
+3. Klik ikon folder (Open File), pilih `database/schema.sql`, lalu klik **Execute** (ikon play atau tombol F5). Pastikan muncul pesan sukses.
+4. Ulangi langkah 3 untuk `database/seed.sql`, lalu `database/harga_paket.sql`, **sesuai urutan di tabel di atas**.
+5. Cek di tabel `kamar`, `admin_users`, dan `login_percobaan` bahwa tabel sudah ada dan terisi (klik kanan tabel > View/Edit Data > All Rows).
+
+**Lewat terminal (alternatif):**
+
+```bash
+createdb -U postgres jionsi_db
+psql -U postgres -d jionsi_db -f database/schema.sql
+psql -U postgres -d jionsi_db -f database/seed.sql
+psql -U postgres -d jionsi_db -f database/harga_paket.sql
 ```
 
-Cek di DBeaver bahwa tabel sudah terbentuk dan terisi.
+Gambar QRIS aktif sudah diarahkan ke `/assets/img/Qris.jpeg` oleh `seed.sql`, jadi tidak perlu perintah `UPDATE` tambahan.
+
+**Akun admin bawaan** (dari `seed.sql`). Hanya ada satu akun, yaitu Pengelola Vila:
+
+| Nama | Username | Kata sandi |
+|---|---|---|
+| Pengelola Vila | `admin_drjionsi_` (ada garis bawah di akhir) | `drjionsi@123123` |
+
+Login dilakukan di http://localhost:8000/login.php. Bila salah memasukkan kata sandi 3 kali berturut-turut, IP terkunci selama 5 menit. Ganti kata sandi bawaan ini sebelum aplikasi dipakai di server sungguhan.
 
 ### 4. Aktifkan ekstensi PostgreSQL di PHP
 
@@ -159,6 +203,28 @@ php -S localhost:8000 -t public
 ```
 
 Buka http://localhost:8000 di browser. Hentikan server dengan `Ctrl+C`.
+
+## Troubleshooting Database
+
+| Pesan error | Penyebab | Solusi |
+|---|---|---|
+| `relation "login_percobaan" does not exist` | Database dibuat dari `schema.sql` versi lama | Jalankan `migrasi_login.sql` (atau buat ulang database) |
+| `column "username" does not exist` | Tabel `admin_users` masih versi lama | Jalankan `migrasi_login.sql` (atau buat ulang database) |
+| `relation "..." does not exist` pada tabel lain | Urutan impor salah atau ada berkas yang terlewat | Buat ulang database dan jalankan berkas sesuai urutan di langkah 3 |
+| `Koneksi database gagal` | Isi `.env` tidak cocok dengan PostgreSQL lokal | Cek `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASS` |
+| `could not find driver` | Ekstensi `pdo_pgsql` belum aktif | Lihat langkah 4 |
+
+**Memperbarui database lama:** jalankan `database/migrasi_login.sql`. Berkas ini menambah kolom `username`, membuat tabel `login_percobaan`, menyatukan semua admin menjadi satu akun **Pengelola Vila** (akun lain dihapus, riwayatnya dialihkan), dan **mereset kata sandinya** menjadi `drjionsi@123123`.
+
+**Membuat ulang database dari nol** (paling bersih, data lokal akan hilang). Di pgAdmin, klik kanan `jionsi_db` lalu **Delete/Drop**, buat lagi dengan nama yang sama, kemudian ulangi langkah 3. Lewat terminal:
+
+```bash
+dropdb -U postgres jionsi_db
+createdb -U postgres jionsi_db
+psql -U postgres -d jionsi_db -f database/schema.sql
+psql -U postgres -d jionsi_db -f database/seed.sql
+psql -U postgres -d jionsi_db -f database/harga_paket.sql
+```
 
 ## Keamanan dan Konvensi Kode
 
@@ -222,7 +288,7 @@ git push origin main
 - Beri tahu di grup bila akan mengubah berkas yang sering dipakai bersama (misalnya `style.css`, `schema.sql`, `db.php`) agar tidak bentrok.
 - Bila terjadi konflik saat `git pull --rebase`, selesaikan konfliknya, jalankan `git add` pada berkas yang diperbaiki lalu `git rebase --continue`. Bila ragu, tanyakan ke Project Manager.
 - Dilarang `git push --force` ke `main`.
-- Perubahan skema database (`schema.sql`) wajib diinfokan ke seluruh tim, karena setiap anggota perlu mengimpor ulang database lokalnya.
+- Perubahan skema database (`schema.sql`) wajib diinfokan ke seluruh tim, karena setiap anggota perlu membuat ulang database lokalnya. Bila perubahan itu juga menyentuh database yang sudah berjalan, sertakan berkas migrasi (seperti `migrasi_login.sql`) di folder `database/`.
 - Pada setiap milestone, Project Manager membuat tag di `main` (contoh `milestone-2` dan `v1.0-final`):
 
   ```bash
