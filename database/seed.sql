@@ -2,16 +2,13 @@
 -- Data dummy jionsi_db (jalankan SETELAH schema.sql)
 -- =====================================================================
 
--- pgcrypto hanya dipakai untuk membuat hash bcrypt password dummy
--- (kompatibel dengan password_verify() di PHP). Password admin: admin123
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- ---------------------------------------------------------------------
 -- Admin
 -- ---------------------------------------------------------------------
-INSERT INTO admin_users (nama, nomor_whatsapp, password) VALUES
-('Bpk. Hendra', '081233449081', crypt('admin123', gen_salt('bf', 10))),
-('Ibu Ratna',   '081233449082', crypt('admin123', gen_salt('bf', 10)))
+INSERT INTO admin_users (nama, username, nomor_whatsapp, password) VALUES
+('Pengelola Vila', 'admin_drjionsi_', '081233449081', crypt('drjionsi@123123', gen_salt('bf', 10)))
 ON CONFLICT (nomor_whatsapp) DO NOTHING;
 
 -- ---------------------------------------------------------------------
@@ -131,13 +128,13 @@ VALUES
  'Terverifikasi', 1, '2026-10-18 09:30', '2026-10-18 09:10'),
 ((SELECT id FROM reservasi WHERE kode_booking='DRJ-20261105-K102-B8D2'),
  2, 1100000, '2026-10-28', '/uploads/bukti/bukti-agus.jpg',
- 'Terverifikasi', 2, '2026-10-28 13:40', '2026-10-28 13:10'),
+ 'Terverifikasi', 1, '2026-10-28 13:40', '2026-10-28 13:10'),
 ((SELECT id FROM reservasi WHERE kode_booking='DRJ-20261224-K201-N4UF'),
  2, 2550000, '2026-10-27', '/uploads/bukti/bukti-bambang.webp',
  'Terverifikasi', 1, '2026-10-27 16:10', '2026-10-27 15:40'),
 ((SELECT id FROM reservasi WHERE kode_booking='DRJ-20261110-K104-R7HE'),
  2, 1100000, '2026-10-26', '/uploads/bukti/bukti-maya.jpg',
- 'Terverifikasi', 2, '2026-10-26 11:30', '2026-10-26 11:10');
+ 'Terverifikasi', 1, '2026-10-26 11:30', '2026-10-26 11:10');
 
 -- ---------------------------------------------------------------------
 -- Refund
@@ -160,7 +157,7 @@ FROM (VALUES
  ('DRJ-20261020-K101-A3C9', 'Menunggu Konfirmasi', 'Dibayar',             1,    '2026-10-18 09:30'),
  ('DRJ-20261105-K102-B8D2', NULL,                  'Di-Keep',             NULL, '2026-10-28 13:00'),
  ('DRJ-20261105-K102-B8D2', 'Di-Keep',             'Menunggu Konfirmasi', NULL, '2026-10-28 13:10'),
- ('DRJ-20261105-K102-B8D2', 'Menunggu Konfirmasi', 'Dibayar',             2,    '2026-10-28 13:40'),
+ ('DRJ-20261105-K102-B8D2', 'Menunggu Konfirmasi', 'Dibayar',             1,    '2026-10-28 13:40'),
  ('DRJ-20261224-K201-N4UF', NULL,                  'Di-Keep',             NULL, '2026-10-27 15:30'),
  ('DRJ-20261224-K201-N4UF', 'Di-Keep',             'Menunggu Konfirmasi', NULL, '2026-10-27 15:40'),
  ('DRJ-20261224-K201-N4UF', 'Menunggu Konfirmasi', 'Dibayar',             1,    '2026-10-27 16:10'),
@@ -171,7 +168,7 @@ FROM (VALUES
  ('DRJ-20261101-K103-L2PW', 'Di-Keep',             'Dibatalkan',          NULL, '2026-10-27 08:10'),
  ('DRJ-20261110-K104-R7HE', NULL,                  'Di-Keep',             NULL, '2026-10-26 11:00'),
  ('DRJ-20261110-K104-R7HE', 'Di-Keep',             'Menunggu Konfirmasi', NULL, '2026-10-26 11:10'),
- ('DRJ-20261110-K104-R7HE', 'Menunggu Konfirmasi', 'Dibayar',             2,    '2026-10-26 11:30'),
+ ('DRJ-20261110-K104-R7HE', 'Menunggu Konfirmasi', 'Dibayar',             1,    '2026-10-26 11:30'),
  ('DRJ-20261110-K104-R7HE', 'Dibayar',             'Refund Diajukan',     NULL, '2026-10-28 19:00')
 ) AS v(kode, lama, baru, admin_id, waktu)
 JOIN reservasi r ON r.kode_booking = v.kode;
