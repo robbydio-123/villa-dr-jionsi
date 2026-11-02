@@ -1,10 +1,3 @@
-/* ==========================================================================
-   public/assets/js/refund-admin.js
-   Halaman: Pengajuan Refund (panel admin)
-   Catatan: ini masih simulasi tampilan (belum menyimpan ke database).
-   Saat backend siap, ganti isi setStatus() dengan fetch()/POST ke server.
-   Dipasang lewat public/admin_refund.php ($extraJs).
-   ========================================================================== */
 document.addEventListener('DOMContentLoaded', function () {
     const app = document.getElementById('rfApp');
     if (!app) return;
@@ -77,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (act === 'setuju') {
                 const note = modal.querySelector('[data-note]').value.trim();
-                setStatus(modal, 'disetujui', 'Disetujui oleh Bpk. Hendra.' + (note ? ' Catatan: ' + note : ''), 't-ok');
+                setStatus(modal, 'disetujui', 'Disetujui oleh Pengelola Vila.' + (note ? ' Catatan: ' + note : ''), 't-ok');
                 toast('Refund disetujui. Lanjutkan dengan transfer dana ke tamu.');
 
             } else if (act === 'tolak') {
@@ -87,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const extra = modal.querySelector('[data-reject-note]').value.trim();
                 const text  = sel.value + (extra ? ' — ' + extra : '');
                 modal.querySelector('[data-reject-view]').textContent = text;
-                setStatus(modal, 'ditolak', 'Ditolak oleh Bpk. Hendra. Alasan: ' + text, 't-no');
+                setStatus(modal, 'ditolak', 'Ditolak oleh Pengelola Vila. Alasan: ' + text, 't-no');
                 toast('Pengajuan refund ditolak.');
 
             } else if (act === 'transfer') {
