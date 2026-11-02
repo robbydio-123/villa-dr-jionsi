@@ -17,11 +17,19 @@ CREATE EXTENSION IF NOT EXISTS btree_gist;
 CREATE TABLE IF NOT EXISTS admin_users (
     id              SERIAL PRIMARY KEY,
     nama            VARCHAR(100) NOT NULL,
+    username        VARCHAR(50)  UNIQUE NOT NULL,
     nomor_whatsapp  VARCHAR(20)  UNIQUE NOT NULL,
     password        VARCHAR(255) NOT NULL,
     created_at      TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Pencatat percobaan login gagal (3x salah -> terkunci 5 menit, per IP)
+CREATE TABLE IF NOT EXISTS login_percobaan (
+    ip               VARCHAR(45) PRIMARY KEY,
+    gagal            INT         NOT NULL DEFAULT 0,
+    terkunci_sampai  TIMESTAMP,
+    terakhir         TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 -- ---------------------------------------------------------------------
 -- 2. PENGATURAN VILLA (satu baris saja)
 -- ---------------------------------------------------------------------
