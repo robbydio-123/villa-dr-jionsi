@@ -10,7 +10,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <title>Portal Pengelola - Villa D-R Jionsi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=<?= filemtime(__DIR__ . '/../../../public/assets/css/style.css') ?>">
 </head>
 
 <body class="admin-body">
@@ -20,9 +20,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
         <aside class="admin-sidebar">
             <div class="sidebar-brand">
-                <div>
-                    <img src="assets/img/logo%20dr-jionsi.jpeg" alt="Logo Villa D-R Jionsi" class="sidebar-brand-logo">
-                    <small style="color: #A09C98; font-size: 0.65rem;">Villa D-R Jionsi</small>
+                <div class="sidebar-brand-logo">
+                    <img src="assets/img/logo%20dr-jionsi.jpeg" alt="Logo Villa D-R Jionsi">
+                </div>
+                <div class="sidebar-brand-text">
+                    <h6>D-R Jionsi</h6>
+                    <small style="color: #A09C98; font-size: 0.65rem;">Portal Pengelola</small>
                 </div>
             </div>
 
@@ -69,24 +72,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <input type="text" class="form-control bg-light border-0" placeholder="Cari tamu, kode booking, villa...">
                 </div>
 
-                <div class="d-flex align-items-center gap-4">
-                    <span class="badge bg-light text-dark border rounded-pill py-2 px-3 fw-normal">
-                        <i class="bi bi-circle-fill text-success me-2" style="font-size: 0.4rem;"></i> Kota Batu &bull; Operasional Normal
-                    </span>
-
-                    <div class="position-relative">
-                        <i class="bi bi-bell fs-5 text-muted"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-end d-none d-md-block">
+                        <h6 class="mb-0 fw-bold small">Pengelola Vila</h6>
                     </div>
-
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="text-end d-none d-md-block">
-                            <h6 class="mb-0 fw-bold small"><?= htmlspecialchars((string)($_SESSION['admin_nama'] ?? 'Pengelola'), ENT_QUOTES, 'UTF-8') ?></h6>
-                            <small class="text-muted" style="font-size: 0.7rem;">Pengelola Villa</small>
-                        </div>
-                        <div class="rounded-circle bg-brown text-white d-flex align-items-center justify-content-center fw-bold" style="width: 40px; height: 40px;">
-                            <i class="bi bi-person"></i>
-                        </div>
+                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style="width: 40px; height: 40px; background-color: #A0522D;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/></svg>
                     </div>
                 </div>
             </header>
