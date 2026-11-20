@@ -73,6 +73,8 @@ CREATE TABLE IF NOT EXISTS kamar (
                           CHECK (status IN ('Tersedia', 'Terisi', 'Perbaikan')),
     deskripsi             TEXT,
     foto_url              VARCHAR(255),
+    catatan_perbaikan     VARCHAR(150),
+    dihapus_pada          TIMESTAMP,   -- hapus lunak: NULL = tampil, terisi = disembunyikan
     kondisi_diperbarui_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
     created_at            TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
 );
@@ -102,7 +104,7 @@ CREATE TABLE IF NOT EXISTS reservasi (
                                                 'Kedaluwarsa', 'Dibatalkan', 'Refund Diajukan')),
     batas_waktu_keep  TIMESTAMP NOT NULL,
     setuju_kebijakan  BOOLEAN NOT NULL DEFAULT FALSE,
-    created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    dihapus_pada      TIMESTAMP,   
 
     CHECK (waktu_checkout > waktu_checkin),
 
@@ -159,3 +161,4 @@ CREATE TABLE IF NOT EXISTS log_status_reservasi (
     diubah_oleh   INT REFERENCES admin_users(id),
     created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
