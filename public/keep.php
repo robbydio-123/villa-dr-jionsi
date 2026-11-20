@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } catch (Throwable $e) {
         error_log('[reservasi] Gagal membuat booking: ' . $e->getMessage());
         public_error('Reservasi tidak dapat diproses saat ini. Silakan coba beberapa saat lagi.');
-        redirect_to('index.php');
+        redirect_to('beranda.php');
     }
 }
 

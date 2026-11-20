@@ -5,15 +5,26 @@ $pdo = db();
 expire_keeps($pdo);
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf();
-    $code = strtoupper(trim((string)($_POST['kode'] ?? '')));
-    $lastFour = trim((string)($_POST['phone'] ?? ''));
-    if (!preg_match('/^[A-Z0-9-]{5,50}$/', $code) || !preg_match('/^\d{4}$/', $lastFour)) {
-        public_error('Kode booking atau empat digit nomor WhatsApp tidak valid.');
+    $phone = preg_replace('/[\s()+.-]/', '', trim((string)($_POST['phone'] ?? '')));
+    if (!preg_match('/^\d{9,15}$/', $phone)) {
+        public_error('Masukkan nomor WhatsApp yang valid, termasuk kode negara atau awalan 0.');
         redirect_to('status.php');
     }
-    $booking = booking_by_credentials($pdo, $code, $lastFour);
+
+    if (str_starts_with($phone, '0')) {
+        $phone = '62' . substr($phone, 1);
+    } elseif (!str_starts_with($phone, '62')) {
+        $phone = '62' . $phone;
+    }
+
+    if (!preg_match('/^62\d{8,13}$/', $phone)) {
+        public_error('Masukkan nomor WhatsApp Indonesia yang valid.');
+        redirect_to('status.php');
+    }
+
+    $booking = booking_by_whatsapp($pdo, $phone);
     if (!$booking) {
-        public_error('Reservasi tidak ditemukan. Periksa kembali kode booking dan empat digit WhatsApp Anda.');
+        public_error('Reservasi dengan nomor WhatsApp tersebut tidak ditemukan. Periksa kembali nomor yang digunakan saat memesan.');
         redirect_to('status.php');
     }
     set_public_booking((int)$booking['id']);
@@ -25,7 +36,7 @@ $error = take_public_error();
 $authorizedId = (int)($_SESSION['authorized_booking_id'] ?? 0);
 $booking = $authorizedId > 0 ? booking_by_id($pdo, $authorizedId) : null;
 if (!$booking || strcasecmp((string)$booking['kode_booking'], $code) !== 0) {
-    public_error('Masukkan kode booking dan empat digit terakhir nomor WhatsApp untuk melihat status reservasi.');
+    public_error('Masukkan nomor WhatsApp yang digunakan saat reservasi untuk melihat statusnya.');
     redirect_to('status.php');
 }
 

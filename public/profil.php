@@ -1,11 +1,13 @@
 <?php
-// Memanggil Navigasi Atas
-require_once '../app/views/layouts/header.php';
+require_once __DIR__ . '/../app/public_helpers.php';
+$pageTitle = 'Profil & Fasilitas - ' . villa_name();
 
-require_once __DIR__ . '/../config/db.php';
+// Memanggil Navigasi Atas
+require_once __DIR__ . '/../app/views/layouts/header.php';
+
 // Memanggil Konten Halaman Profil
-require_once '../app/views/profil/index.php';
+require_once __DIR__ . '/../app/views/profil/index.php';
 
 // Memanggil Navigasi Bawah
-require_once '../app/views/layouts/footer.php';
+require_once __DIR__ . '/../app/views/layouts/footer.php';
 ?>

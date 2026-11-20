@@ -4,18 +4,64 @@ require_once __DIR__ . '/../app/public_helpers.php';
 $pdo = db();
 expire_keeps($pdo);
 $roomId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-$stmt = $pdo->prepare('SELECT * FROM kamar WHERE id = :id');
+$stmt = $pdo->prepare('SELECT * FROM kamar WHERE id = :id AND dihapus_pada IS NULL');
 $stmt->execute(['id' => $roomId ?: 0]);
 $room = $stmt->fetch();
+$availabilityCheck = ($_GET['availability'] ?? '') === '1';
 if (!$room) {
+    if ($availabilityCheck) {
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['available' => false]);
+        exit;
+    }
     http_response_code(404);
     $room = null;
     $pageTitle = 'Kamar tidak ditemukan';
     require_once __DIR__ . '/../app/views/layouts/header.php';
-    echo '<main class="container py-5"><div class="alert alert-warning">Kamar tidak ditemukan.</div><a href="index.php">Kembali ke katalog</a></main>';
+    echo '<main class="container py-5"><div class="alert alert-warning">Kamar tidak ditemukan.</div><a href="beranda.php">Kembali ke katalog</a></main>';
     require_once __DIR__ . '/../app/views/layouts/footer.php';
     exit;
 }
+
+if ($availabilityCheck) {
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-store');
+
+    $checkin = booking_datetime(trim((string)($_GET['checkin'] ?? '')));
+    $duration = filter_var($_GET['durasi'] ?? null, FILTER_VALIDATE_INT);
+    $available = false;
+
+    if (
+        $room['status'] === 'Tersedia'
+        && $checkin
+        && $checkin > new DateTimeImmutable('now')
+        && $duration
+        && valid_duration_hours((int)$duration)
+    ) {
+        $checkout = $checkin->modify('+' . (int)$duration . ' hours');
+        $availability = $pdo->prepare("
+            SELECT NOT EXISTS (
+                SELECT 1 FROM reservasi
+                WHERE kamar_id = :room_id
+                  AND status_booking IN ('Di-Keep', 'Menunggu Konfirmasi', 'Dibayar')
+                  AND tsrange(waktu_checkin, waktu_checkout) && tsrange(:checkin::timestamp, :checkout::timestamp)
+            )
+        ");
+        $availability->execute([
+            'room_id' => $room['id'],
+            'checkin' => $checkin->format('Y-m-d H:i:s'),
+            'checkout' => $checkout->format('Y-m-d H:i:s'),
+        ]);
+        $available = filter_var($availability->fetchColumn(), FILTER_VALIDATE_BOOLEAN);
+    }
+
+    echo json_encode(['available' => $available]);
+    exit;
+}
+
+$fotoStmt = $pdo->prepare('SELECT url, label FROM kamar_foto WHERE kamar_id = :id ORDER BY urutan, id');
+$fotoStmt->execute(['id' => $room['id']]);
+$room['galeri'] = $fotoStmt->fetchAll();
 
 $checkinInput = trim((string)($_GET['checkin'] ?? ''));
 $checkin = booking_datetime($checkinInput);
@@ -39,6 +85,17 @@ if ($available && $checkin && $checkout) {
     ]);
     $available = filter_var($availability->fetchColumn(), FILTER_VALIDATE_BOOLEAN);
 }
+$jadwalStmt = $pdo->prepare("
+    SELECT waktu_checkin, waktu_checkout
+    FROM reservasi
+    WHERE kamar_id = :id
+      AND status_booking IN ('Di-Keep', 'Menunggu Konfirmasi', 'Dibayar')
+      AND waktu_checkout > LOCALTIMESTAMP
+    ORDER BY waktu_checkin
+    LIMIT 5
+");
+$jadwalStmt->execute(['id' => $room['id']]);
+$jadwalTerpesan = $jadwalStmt->fetchAll();
 $packagePrices = short_package_prices($pdo);
 $settings = get_public_settings($pdo);
 $pageTitle = 'Kamar ' . $room['nomor_kamar'] . ' - ' . $room['tipe_kamar'];
