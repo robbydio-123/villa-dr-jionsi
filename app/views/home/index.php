@@ -1,8 +1,7 @@
 <?php
-// Pastikan koneksi database tersedia
+
 $pdo = db();
 
-// Tangkap parameter filter & pencarian
 $filterCheckin   = trim($_GET['checkin'] ?? '');
 $filterDurasi    = (int)($_GET['durasi'] ?? 0);
 if (!valid_duration_hours($filterDurasi)) {
@@ -10,7 +9,7 @@ if (!valid_duration_hours($filterDurasi)) {
 }
 $filterCheckout  = trim($_GET['checkout'] ?? '');
 $filterKapasitas = (int)($_GET['kapasitas'] ?? 0);
-$filterSort      = trim($_GET['sort'] ?? 'harga_asc');
+$filterSort      = trim($_GET['sort'] ?? 'kapasitas_desc');
 
 // Jika check-in dan durasi diisi tapi checkout belum terisi, hitung otomatis
 if (!empty($filterCheckin) && $filterDurasi > 0 && empty($filterCheckout)) {
@@ -21,18 +20,14 @@ if (!empty($filterCheckin) && $filterDurasi > 0 && empty($filterCheckout)) {
 }
 
 // Opsi pengurutan
-$orderSql = 'k.harga_per_malam ASC';
-if ($filterSort === 'harga_desc') {
-    $orderSql = 'k.harga_per_malam DESC';
-} elseif ($filterSort === 'kapasitas_desc') {
-    $orderSql = 'k.kapasitas DESC, k.harga_per_malam ASC';
-} elseif ($filterSort === 'nomor_asc') {
-    $orderSql = 'k.nomor_kamar ASC';
+$orderSql = 'k.kapasitas DESC, k.harga_per_malam ASC';
+if ($filterSort === 'lantai_asc') {
+    $orderSql = 'k.lantai ASC, k.nomor_kamar ASC';
 }
 
 // Query mengambil data kamar dengan pengecekan tumpang tindih reservasi
 $params = [];
-$whereClauses = [];
+$whereClauses = ['k.dihapus_pada IS NULL'];
 
 if ($filterKapasitas > 0) {
     $whereClauses[] = 'k.kapasitas >= :kapasitas';
@@ -49,10 +44,11 @@ if ($adaCariWaktu) {
             k.*,
             res.status_booking AS active_status,
             res.waktu_checkout AS active_checkout,
+            res.waktu_checkin AS active_checkin,
             res.batas_waktu_keep AS active_keep
         FROM kamar k
         LEFT JOIN LATERAL (
-            SELECT r.status_booking, r.waktu_checkout, r.batas_waktu_keep
+            SELECT r.status_booking, r.waktu_checkin, r.waktu_checkout, r.batas_waktu_keep
             FROM reservasi r
             WHERE r.kamar_id = k.id
               AND r.status_booking IN ('Di-Keep', 'Menunggu Konfirmasi', 'Dibayar')
@@ -66,21 +62,25 @@ if ($adaCariWaktu) {
     $params['cari_checkin'] = date('Y-m-d H:i:s', strtotime($filterCheckin));
     $params['cari_checkout'] = date('Y-m-d H:i:s', strtotime($filterCheckout));
 } else {
-    // Jika belum ada rentang waktu pencarian, periksa kondisi saat ini (real-time)
+    // Belum ada rentang waktu pencarian: ambil reservasi yang sedang berjalan, atau
+    // reservasi terdekat yang akan datang, supaya kamar yang sudah dipesan tidak tampil "Tersedia".
     $sqlKamar = "
         SELECT 
             k.*,
             res.status_booking AS active_status,
             res.waktu_checkout AS active_checkout,
+            res.waktu_checkin AS active_checkin,
+            res.active_now,
             res.batas_waktu_keep AS active_keep
         FROM kamar k
         LEFT JOIN LATERAL (
-            SELECT r.status_booking, r.waktu_checkout, r.batas_waktu_keep
+            SELECT r.status_booking, r.waktu_checkin, r.waktu_checkout, r.batas_waktu_keep,
+                   (r.waktu_checkin <= LOCALTIMESTAMP) AS active_now
             FROM reservasi r
             WHERE r.kamar_id = k.id
               AND r.status_booking IN ('Di-Keep', 'Menunggu Konfirmasi', 'Dibayar')
-              AND tsrange(r.waktu_checkin, r.waktu_checkout) @> LOCALTIMESTAMP
-            ORDER BY r.created_at DESC
+              AND r.waktu_checkout > LOCALTIMESTAMP
+            ORDER BY (r.waktu_checkin <= LOCALTIMESTAMP) DESC, r.waktu_checkin ASC
             LIMIT 1
         ) res ON TRUE
         $whereSql
@@ -123,11 +123,17 @@ function formatWaktuRelatif(?string $datetime): string {
         <div class="alert alert-warning" role="alert"><?= h($error) ?></div>
     <?php endif; ?>
     <!-- Bagian Hero Image -->
-    <div class="hero-section" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==');">
+    <div class="hero-section" aria-label="Foto Villa">
+        <?php $fotoHeroUrls = home_hero_photo_urls(); ?>
+        <div class="hero-slides" aria-hidden="true">
+            <?php foreach ($fotoHeroUrls as $index => $fotoHero): ?>
+                <div class="hero-slide<?= $index === 0 ? ' is-active' : '' ?>" style="background-image: url('<?= h($fotoHero) ?>');"></div>
+            <?php endforeach; ?>
+        </div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <span class="badge bg-secondary bg-opacity-50 text-light mb-2 rounded-pill px-3 py-2"><i class="bi bi-geo-alt-fill me-1 text-warning"></i> SONGGOKERTO HIGHLAND · KOTA BATU</span>
-            <h1 class="display-4 fw-bolder mb-3">Villa D-R Jionsi</h1>
+            <h1 class="display-4 fw-bolder mb-3"><?= h(villa_name()) ?></h1>
             <p class="lead mb-4 fw-light" style="max-width: 600px;">Menginap nyaman di Batu, lihat kondisi kamar yang sebenarnya.</p>
             <div class="d-flex flex-wrap gap-3 mb-4">
                 <span class="bg-white bg-opacity-10 px-3 py-2 rounded border border-secondary border-opacity-50 small"><i class="bi bi-droplet-half text-brown me-2"></i> Air Panas di setiap kamar</span>
@@ -135,11 +141,16 @@ function formatWaktuRelatif(?string $datetime): string {
             </div>
             <a href="profil.php" class="btn btn-brown px-4 py-2 fw-semibold rounded-pill">Lihat Profil Villa <i class="bi bi-arrow-right ms-1"></i></a>
         </div>
+        <div class="hero-indicators" aria-hidden="true">
+            <?php foreach ($fotoHeroUrls as $index => $fotoHero): ?>
+                <span class="hero-indicator<?= $index === 0 ? ' is-active' : '' ?>"></span>
+            <?php endforeach; ?>
+        </div>
     </div>
 
     <!-- Form Pencarian Melayang -->
     <div class="card p-3 shadow-sm border-0 bg-white floating-search-form mb-4">
-        <form class="row g-3 align-items-end" id="formCariKamar" method="GET" action="index.php">
+        <form class="row g-3 align-items-end" id="formCariKamar" method="GET" action="beranda.php">
 
             <!-- Waktu Check-in -->
             <div class="col-12 col-md-3">
@@ -174,7 +185,7 @@ function formatWaktuRelatif(?string $datetime): string {
             <div class="col-12 col-md-2 d-flex gap-1">
                 <button type="submit" class="btn btn-brown btn-sm flex-fill fw-bold py-2"><i class="bi bi-search me-1"></i> Cari</button>
                 <?php if ($adaCariWaktu || $filterKapasitas > 0): ?>
-                    <a href="index.php" class="btn btn-outline-secondary btn-sm py-2" title="Reset Pencarian"><i class="bi bi-arrow-counterclockwise"></i></a>
+                    <a href="beranda.php" class="btn btn-outline-secondary btn-sm py-2" title="Reset Pencarian"><i class="bi bi-arrow-counterclockwise"></i></a>
                 <?php endif; ?>
             </div>
         </form>
@@ -217,17 +228,12 @@ function formatWaktuRelatif(?string $datetime): string {
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
         <div class="d-flex flex-wrap align-items-center gap-2">
             <h4 class="fw-bolder mb-0">Katalog Pilihan Kamar</h4>
-            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1 border border-success border-opacity-25 small">
-                <i class="bi bi-circle-fill me-1" style="font-size: 0.5rem;"></i> <?= (int)$totalSiapHuni ?> dari <?= count($daftarKamar) ?> Unit Siap Huni
-            </span>
         </div>
         <div class="d-flex align-items-center gap-2 small">
             <label for="selectUrutkan" class="text-muted text-nowrap mb-0">Urutkan:</label>
             <select id="selectUrutkan" class="form-select form-select-sm border-secondary-subtle fw-semibold" style="min-width: 160px;">
-                <option value="harga_asc" <?= $filterSort === 'harga_asc' ? 'selected' : '' ?>>Harga Terendah</option>
-                <option value="harga_desc" <?= $filterSort === 'harga_desc' ? 'selected' : '' ?>>Harga Tertinggi</option>
                 <option value="kapasitas_desc" <?= $filterSort === 'kapasitas_desc' ? 'selected' : '' ?>>Kapasitas Terbesar</option>
-                <option value="nomor_asc" <?= $filterSort === 'nomor_asc' ? 'selected' : '' ?>>Nomor Kamar</option>
+                <option value="lantai_asc" <?= $filterSort === 'lantai_asc' ? 'selected' : '' ?>>Berdasarkan lantai</option>
             </select>
         </div>
     </div>
@@ -242,7 +248,7 @@ function formatWaktuRelatif(?string $datetime): string {
                     <h5 class="fw-bold mb-2">Tidak Ada Kamar yang Sesuai</h5>
                     <p class="text-muted small mb-3">Coba sesuaikan tanggal check-in, durasi sewa, atau kurangi filter kapasitas tamu.</p>
                     <div>
-                        <a href="index.php" class="btn btn-brown btn-sm px-4 py-2 rounded-pill fw-semibold">Tampilkan Semua Kamar</a>
+                        <a href="beranda.php" class="btn btn-brown btn-sm px-4 py-2 rounded-pill fw-semibold">Tampilkan Semua Kamar</a>
                     </div>
                 </div>
             </div>
@@ -259,6 +265,10 @@ function formatWaktuRelatif(?string $datetime): string {
                 $badgeText       = 'Tersedia';
                 $isBisaDipesan   = true;
                 $pesanButtonText = 'Pesan Kamar';
+                $statusSaatIni   = false;
+                $tersediaMulai   = null;
+                $dipesanRange    = null;
+                $sedangAktif     = in_array($kamar['active_now'] ?? null, [true, 't', 'true', 1, '1'], true);
 
                 if ($statusKamar === 'Perbaikan') {
                     $badgeClass      = 'bg-secondary';
@@ -274,6 +284,18 @@ function formatWaktuRelatif(?string $datetime): string {
                     $badgeText       = 'Tidak tersedia';
                     $isBisaDipesan   = false;
                     $pesanButtonText = 'Tidak tersedia';
+                } elseif ($activeStatus && !$adaCariWaktu && !$sedangAktif) {
+                    // Belum berjalan, tetapi sudah ada pesanan untuk tanggal mendatang.
+                    if (!empty($kamar['active_checkin']) && !empty($kamar['active_checkout'])) {
+                        $dipesanRange = date('d M', strtotime($kamar['active_checkin'])) . ' - ' . date('d M', strtotime($kamar['active_checkout']));
+                    }
+                    $badgeClass      = 'bg-dipesan';
+                    $badgeStyle      = 'background: #A0522D; color: white;';
+                    $badgeIcon       = 'bi-calendar-check';
+                    $badgeText       = 'Dipesan' . ($dipesanRange ? ' ' . $dipesanRange : '');
+                    $isBisaDipesan   = false;
+                    $pesanButtonText = 'Dipesan';
+                    $statusSaatIni   = true;
                 } elseif ($activeStatus === 'Di-Keep') {
                     $badgeClass      = 'bg-dikeep';
                     $badgeStyle      = 'background: #fd7e14; color: white;';
@@ -281,6 +303,7 @@ function formatWaktuRelatif(?string $datetime): string {
                     $badgeText       = 'Sedang Di-Keep';
                     $isBisaDipesan   = false;
                     $pesanButtonText = 'Sedang Di-Keep';
+                    $statusSaatIni   = true;
                 } elseif (in_array($activeStatus, ['Menunggu Konfirmasi', 'Dibayar'])) {
                     $badgeClass      = 'bg-terisi';
                     $badgeStyle      = 'background: #dc3545; color: white;';
@@ -291,11 +314,23 @@ function formatWaktuRelatif(?string $datetime): string {
                     }
                     $isBisaDipesan   = false;
                     $pesanButtonText = $badgeText;
+                    $statusSaatIni   = true;
+                }
+
+                $linkPesan = '';
+                if (!$adaCariWaktu && !empty($statusSaatIni) && $statusKamar === 'Tersedia') {
+                    $isBisaDipesan   = true;
+                    $pesanButtonText = 'Pilih Tanggal';
+                    $linkPesan       = 'detail.php?id=' . (int)$kamar['id'];
+                    if ($sedangAktif && !empty($kamar['active_checkout'])) {
+                        $tersediaMulai = date('d M', strtotime($kamar['active_checkout']));
+                    }
                 }
 
                 $fasilitasList = getFasilitasKamar($kamar['deskripsi'] ?? '');
                 $fasilitasJson = htmlspecialchars(json_encode(array_column($fasilitasList, 'label')));
                 $kondisiUpdate = formatWaktuRelatif($kamar['kondisi_diperbarui_at'] ?? null);
+                $fotoKatalog = (string)($kamar['foto_url'] ?? '');
 
                 // Bangun parameter query pemesanan
                 $bookingQuery = http_build_query(array_filter([
@@ -309,8 +344,8 @@ function formatWaktuRelatif(?string $datetime): string {
                 <div class="col-md-6 col-lg-4 room-card-item" data-facilities="<?= $fasilitasJson ?>">
                     <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden <?= !$isBisaDipesan ? 'opacity-75' : '' ?>">
                         <div class="position-relative">
-                            <?php if (!empty($kamar['foto_url']) && file_exists(__DIR__ . '/../../../public' . $kamar['foto_url'])): ?>
-                                <img src="<?= htmlspecialchars(ltrim($kamar['foto_url'], '/')) ?>" alt="Kamar <?= htmlspecialchars($kamar['nomor_kamar']) ?>" class="w-100" style="height: 220px; object-fit: cover;">
+                            <?php if ($fotoKatalog !== '' && file_exists(__DIR__ . '/../../../public' . $fotoKatalog)): ?>
+                                <img src="<?= htmlspecialchars(ltrim($fotoKatalog, '/')) ?>" alt="Kamar <?= htmlspecialchars($kamar['nomor_kamar']) ?>" class="w-100" style="height: 220px; object-fit: cover;">
                             <?php else: ?>
                                 <div class="w-100 d-flex flex-column align-items-center justify-content-center text-muted" style="height: 220px; background-color: #E5E0D8;">
                                     <i class="bi bi-door-open fs-1 text-brown opacity-75"></i>
@@ -336,6 +371,9 @@ function formatWaktuRelatif(?string $datetime): string {
                             <div class="bg-success bg-opacity-10 text-success p-2 rounded small fw-semibold mb-3 border border-success border-opacity-25 d-flex align-items-center gap-2">
                                 <i class="bi bi-check-circle"></i> <?= htmlspecialchars($kondisiUpdate) ?>
                             </div>
+                            <?php if ($tersediaMulai): ?>
+                                <div class="small text-muted mb-2"><i class="bi bi-calendar-check me-1"></i>Kosong lagi mulai <?= htmlspecialchars($tersediaMulai) ?> &mdash; pilih tanggal untuk memesan</div>
+                            <?php endif; ?>
                             <div class="d-flex flex-column gap-3 mt-auto">
                                 <div class="d-flex justify-content-between align-items-end">
                                     <small class="text-muted">Tarif Sewa:</small>
@@ -346,7 +384,7 @@ function formatWaktuRelatif(?string $datetime): string {
                                 <div class="d-flex gap-2">
                                     <a href="detail.php?id=<?= (int)$kamar['id'] ?>" class="btn btn-outline-brown flex-fill fw-bold rounded-pill border-brown text-brown">Lihat Detail</a>
                                     <?php if ($isBisaDipesan): ?>
-                                        <a href="formulir.php?<?= $bookingQuery ?>" class="btn btn-brown flex-fill fw-bold rounded-pill bg-brown text-white">Pesan Kamar</a>
+                                        <a href="<?= htmlspecialchars($adaCariWaktu || empty($statusSaatIni) ? 'formulir.php?' . $bookingQuery : $linkPesan) ?>" class="btn btn-brown flex-fill fw-bold rounded-pill bg-brown text-white"><?= htmlspecialchars($pesanButtonText) ?></a>
                                     <?php else: ?>
                                         <button class="btn btn-light border flex-fill fw-bold rounded-pill text-muted" disabled><i class="bi <?= $badgeIcon ?> me-1"></i> <?= htmlspecialchars($pesanButtonText) ?></button>
                                     <?php endif; ?>
