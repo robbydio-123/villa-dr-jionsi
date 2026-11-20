@@ -102,7 +102,7 @@
                 </form>
             </div>
 
-            <a href="index.php" class="back-link"><i class="bi bi-arrow-left"></i> Kembali ke Katalog Kamar</a>
+            <a href="beranda.php" class="back-link"><i class="bi bi-arrow-left"></i> Kembali ke Katalog Kamar</a>
         </section>
     </main>
 

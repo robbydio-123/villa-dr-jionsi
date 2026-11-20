@@ -7,7 +7,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Pengelola - Villa D-R Jionsi</title>
+    <title>Portal Pengelola - <?= h(villa_name()) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="assets/css/style.css?v=<?= filemtime(__DIR__ . '/../../../public/assets/css/style.css') ?>">
@@ -21,10 +21,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <aside class="admin-sidebar">
             <div class="sidebar-brand">
                 <div class="sidebar-brand-logo">
-                    <img src="assets/img/logo%20dr-jionsi.jpeg" alt="Logo Villa D-R Jionsi">
+                    <img src="assets/img/logo%20dr-jionsi.jpeg" alt="Logo <?= h(villa_name()) ?>">
                 </div>
                 <div class="sidebar-brand-text">
-                    <h6>D-R Jionsi</h6>
+                    <h6><?= h(villa_brand()) ?></h6>
                     <small style="color: #A09C98; font-size: 0.65rem;">Portal Pengelola</small>
                 </div>
             </div>
@@ -36,10 +36,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
                 <a href="admin_reservasi.php" class="sidebar-link <?= ($current_page == 'admin_reservasi.php') ? 'active' : '' ?>">
                     <i class="bi bi-calendar2-check"></i> Reservasi
+                    <span id="adminPendingBadge" class="badge bg-danger rounded-pill ms-auto d-none" aria-live="polite"></span>
                 </a>
 
                 <a href="admin_refund.php" class="sidebar-link <?= ($current_page == 'admin_refund.php') ? 'active' : '' ?>">
                     <i class="bi bi-arrow-counterclockwise"></i> Pengajuan Refund
+                    <span id="adminRefundBadge" class="badge bg-danger rounded-pill ms-auto d-none" aria-live="polite"></span>
                 </a>
 
                 <a href="admin_kamar.php" class="sidebar-link <?= ($current_page == 'admin_kamar.php') ? 'active' : '' ?>">
@@ -57,7 +59,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
             <div class="sidebar-footer">
                 <a href="logout.php" class="text-decoration-none text-light d-flex align-items-center gap-2 mb-3"><i class="bi bi-box-arrow-left"></i> Logout</a>
-                <div>&copy; 2026 D-R Jionsi Batu</div>
+                <div>&copy; 2026 <?= h(villa_brand()) ?> Batu</div>
             </div>
         </aside>
 
@@ -73,6 +75,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </div>
 
                 <div class="d-flex align-items-center gap-3">
+                    <button type="button" id="adminEnableNotifications" class="btn btn-light border d-none"
+                            title="Aktifkan notifikasi desktop" aria-label="Aktifkan notifikasi desktop">
+                        <i class="bi bi-bell"></i>
+                    </button>
                     <div class="text-end d-none d-md-block">
                         <h6 class="mb-0 fw-bold small">Pengelola Vila</h6>
                     </div>

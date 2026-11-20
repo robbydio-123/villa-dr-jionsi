@@ -14,8 +14,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($aksi === 'simpan') {
             [$errors, $clean] = validate_settings($_POST);
             if (!$errors) {
+                $fotoProfil = $_FILES['foto_profil'] ?? [];
+                $fotoHero = $_FILES['foto_hero'] ?? [];
+                $hasHeroUpload = isset($fotoHero['error']) && array_filter((array)$fotoHero['error'], static fn($error) => (int)$error !== UPLOAD_ERR_NO_FILE) !== [];
+                $heroDelete = array_values(array_filter((array)($_POST['hapus_hero'] ?? []), 'is_string'));
+                $hasHeroChange = $hasHeroUpload || $heroDelete !== [];
+                if (($fotoProfil['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+                    upload_profile_photo($fotoProfil);
+                }
+                if ($hasHeroChange) {
+                    update_home_hero_photos($fotoHero, $heroDelete);
+                }
                 save_settings($pdo, $clean);
-                set_flash('success', 'Pengaturan berhasil disimpan.');
+                $savedMessage = 'Pengaturan berhasil disimpan';
+                if (($fotoProfil['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+                    $savedMessage .= ' beserta foto profil villa';
+                }
+                if ($hasHeroChange) {
+                    $savedMessage .= ' dan foto hero beranda';
+                }
+                set_flash('success', $savedMessage . '.');
                 redirect_to('admin_pengaturan.php');
             }
             $old = $clean; 
@@ -41,6 +59,6 @@ if ($old) {
 $qris  = get_active_qris($pdo);
 $flash = take_flash();
 
-require_once '../app/views/layouts/admin_header.php';
-require_once '../app/views/admin/pengaturan.php';
-require_once '../app/views/layouts/admin_footer.php';
+require_once __DIR__ . '/../app/views/layouts/admin_header.php';
+require_once __DIR__ . '/../app/views/admin/pengaturan.php';
+require_once __DIR__ . '/../app/views/layouts/admin_footer.php';
