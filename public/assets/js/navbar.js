@@ -11,7 +11,7 @@
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
 
-    const page = location.pathname.split('/').pop() || 'index.php';
+    const page = location.pathname.split('/').pop() || 'profil.php';
     document.querySelectorAll('.navbar-custom .nav-link').forEach(a => {
         if (a.getAttribute('href') === page) a.classList.add('active');
     });

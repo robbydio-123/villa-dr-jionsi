@@ -1,8 +1,9 @@
 <section class="container mt-4 mb-5">
+    <?php $fotoProfilVilla = profile_photo_url(); ?>
     <!-- BREADCRUMB -->
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb small mb-4">
-            <li class="breadcrumb-item"><a href="index.php" class="text-decoration-none text-muted">Beranda</a></li>
+            <li class="breadcrumb-item"><a href="beranda.php" class="text-decoration-none text-muted">Beranda</a></li>
             <li class="breadcrumb-item active fw-semibold" aria-current="page" style="color: var(--drj-primary);">Profil & Fasilitas</li>
         </ol>
     </nav>
@@ -10,19 +11,21 @@
     <div class="row align-items-center mb-5 pb-4 border-bottom">
         <div class="col-lg-6 pe-lg-5 mb-4 mb-lg-0">
             <h6 class="text-muted fw-bold mb-2" style="letter-spacing: 0.5px;">TENTANG KAMI</h6>
-            <h2 class="display-6 fw-bolder mb-3" style="color: #333333;">Highland Sanctuary Kota Batu</h2>
+            <h2 class="fw-bolder mb-3" style="color: #333333; font-size: calc(1.1rem + 1.5vw);">Highland Sanctuary Kota Batu</h2>            
             <p class="text-muted" style="line-height: 1.8; font-size: 1.05rem;">
                 Villa D-R Jionsi mengusung konsep <em>alpine modern</em> yang berpadu dengan sejuknya lereng Gunung Panderman, Songgokerto. Kami bukan sekadar tempat menginap, melainkan ruang peristirahatan yang tenang dari hiruk-pikuk perkotaan.
             </p>
             <p class="text-muted" style="line-height: 1.8; font-size: 1.05rem;">
                 Kami menjunjung tinggi <strong>Transparansi Penuh</strong>. Seluruh dokumentasi yang Anda lihat di katalog adalah kondisi nyata (<em>unedited</em>), diperbarui secara berkala oleh pengelola lokal kami. Tidak ada manipulasi ekspektasi, hanya kenyamanan otentik untuk keluarga Anda.
             </p>
+            <a href="beranda.php" class="btn btn-brown px-4 py-2 fw-semibold">
+                Lihat Beranda &amp; Katalog Kamar <i class="bi bi-arrow-right ms-1"></i>
+            </a>
         </div>
         <div class="col-lg-6">
-            <!-- Placeholder Foto Profil Villa -->
             <div class="position-relative">
-                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" class="w-100 rounded-3 shadow-sm" style="height: 400px; object-fit: cover; background-color: #E5E0D8;" alt="Tampak Depan Villa">
-                <span class="badge bg-white text-dark position-absolute bottom-0 start-0 m-3 px-3 py-2 rounded-pill shadow-sm fw-semibold"><i class="bi bi-camera-fill me-1 text-muted"></i> Fasad Depan Villa (Nyata)</span>
+                <img src="<?= h($fotoProfilVilla) ?>" class="w-100 rounded-3 shadow-sm" style="height: 400px; object-fit: cover; background-color: #E5E0D8;" alt="Foto Villa D-R Jionsi">
+                <span class="badge bg-white text-dark position-absolute bottom-0 start-0 m-3 px-3 py-2 rounded-pill shadow-sm fw-semibold"><i class="bi bi-camera-fill me-1 text-muted"></i> Villa D-R Jionsi</span>
             </div>
         </div>
     </div>
@@ -30,6 +33,22 @@
     <!-- FASILITAS BERSAMA (Di luar kamar) -->
     <div class="mb-5">
         <h3 class="fw-bolder mb-4 text-center">Fasilitas Bersama Tamu</h3>
+        <?php $fasUmum = fasilitas_publik('Area Umum'); ?>
+        <?php if ($fasUmum): ?>
+        <!-- Dari Master Fasilitas (admin): kategori Area Umum, status Aktif -->
+        <div class="row g-4 justify-content-center">
+            <?php foreach ($fasUmum as $fas): ?>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm bg-transparansi p-4 text-center">
+                    <i class="bi <?= h($fas['ikon']) ?> mb-3" style="font-size: 2.5rem; color: var(--drj-primary);"></i>
+                    <h5 class="fw-bold"><?= h($fas['nama']) ?></h5>
+                    <p class="small text-muted mb-0"><?= h($fas['deskripsi'] ?? '') ?></p>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <?php else: ?>
+        <!-- Cadangan: tampil bila tabel fasilitas belum ada atau belum ada Area Umum yang aktif -->
         <div class="row g-4">
             <!-- Fasilitas 1 -->
             <div class="col-md-4">
@@ -56,6 +75,7 @@
                 </div>
             </div>
         </div>
+        <?php endif; ?>
     </div>
 
     <!-- LOKASI & PETA -->
@@ -73,13 +93,14 @@
                 </ul>
             </div>
             <div class="col-md-7">
-                <!-- Placeholder Peta Google Maps -->
-                <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted" style="min-height: 300px; background-color: #E5E0D8;">
-                    <div class="text-center">
-                        <i class="bi bi-map fs-1"></i>
-                        <p class="mt-2 fw-semibold">Integrasi Google Maps akan diletakkan di sini</p>
-                    </div>
-                </div>
+                <iframe
+                    class="w-100 d-block"
+                    style="height: 320px; border: 0;"
+                    src="https://www.google.com/maps?q=Jl.%20Jeruk%20No.%2021%2C%20Songgokerto%2C%20Kec.%20Batu%2C%20Kota%20Batu%2C%20Jawa%20Timur%2065312&output=embed"
+                    title="Google Maps - Jl. Jeruk No. 21, Songgokerto, Kota Batu"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
             </div>
         </div>
     </div>

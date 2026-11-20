@@ -3,7 +3,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb small mb-0">
-                <li class="breadcrumb-item"><a href="index.php" class="text-decoration-none text-muted"><i class="bi bi-house-door"></i> Beranda</a></li>
+                <li class="breadcrumb-item"><a href="beranda.php" class="text-decoration-none text-muted"><i class="bi bi-house-door"></i> Beranda</a></li>
                 <li class="breadcrumb-item active fw-bold text-dark" aria-current="page">Cek Status Reservasi</li>
             </ol>
         </nav>
@@ -18,44 +18,29 @@
                     <i class="bi bi-receipt fs-4"></i>
                 </div>
                 <h3 class="fw-bolder">Cek Status Reservasi Anda</h3>
-                <p class="text-muted small">Masukkan kode referensi untuk melihat status booking</p>
+                <p class="text-muted small">Masukkan nomor WhatsApp yang digunakan saat reservasi</p>
             </div>
 
             <?php if ($error): ?><div class="alert alert-danger" role="alert"><?= h($error) ?></div><?php endif; ?>
             <form action="hasil_status.php" method="POST">
                 <input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">
                 <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-end mb-1">
-                        <label class="form-label small fw-bold text-dark mb-0">Kode Referensi</label>
-                        <small class="text-muted" style="font-size: 0.65rem;"><i class="bi bi-ticket-detailed me-1"></i> Format resmi Villa</small>
-                    </div>
+                    <label class="form-label small fw-bold text-dark mb-1" for="phone">Nomor WhatsApp lengkap</label>
                     <div class="input-group">
-                        <input type="text" class="form-control border-secondary-subtle" name="kode" placeholder="Contoh: DRJ-20261026-K201-7QF4" maxlength="50" required>
-                        <span class="input-group-text bg-white border-secondary-subtle text-muted"><i class="bi bi-ticket"></i></span>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-end mb-1">
-                        <label class="form-label small fw-bold text-dark mb-0">4 digit terakhir nomor WhatsApp</label>
-                        <small class="text-muted" style="font-size: 0.65rem;">Verifikasi Keamanan</small>
-                    </div>
-                    <div class="input-group">
-                        <input type="text" class="form-control border-secondary-subtle" name="phone" placeholder="Contoh: 9081" required maxlength="4">
-                        <span class="input-group-text bg-white border-secondary-subtle text-muted"><i class="bi bi-shield-check"></i></span>
+                        <input id="phone" type="tel" inputmode="tel" autocomplete="tel" class="form-control border-secondary-subtle" name="phone" placeholder="Contoh: 081234567890" required maxlength="20">
+                        <span class="input-group-text bg-white border-secondary-subtle text-muted"><i class="bi bi-whatsapp"></i></span>
                     </div>
                 </div>
 
                 <p class="text-muted mb-4" style="font-size: 0.7rem;">
-                    <i class="bi bi-lock-fill me-1"></i> Digunakan untuk memvalidasi kepemilikan reservasi Anda secara aman tanpa kata sandi.
+                    <i class="bi bi-info-circle me-1"></i> Masukkan tanpa spasi, menggunakan nomor yang didaftarkan saat reservasi.
                 </p>
 
                 <button type="submit" class="btn btn-brown w-100 fw-bold py-2 rounded-pill"><i class="bi bi-search me-2"></i> Cari Reservasi</button>
             </form>
 
             <div class="d-flex justify-content-between mt-4 pt-3 border-top small">
-                <span class="text-muted" style="font-size: 0.7rem;"><i class="bi bi-info-circle me-1"></i> Kode dikirim ke WhatsApp Anda setelah bukti pembayaran diunggah</span>
-                <a href="#" class="text-brown text-decoration-none fw-semibold" style="font-size: 0.7rem;"><i class="bi bi-whatsapp me-1"></i> Lupa kode? Hubungi pengelola</a>
+                <span class="text-muted" style="font-size: 0.7rem;"><i class="bi bi-clock-history me-1"></i> Jika ada beberapa reservasi, reservasi terbaru akan ditampilkan.</span>
             </div>
         </div>
     </div>
@@ -70,8 +55,8 @@
         </div>
         <div class="col-md-4">
             <div class="border rounded p-3 bg-white h-100 shadow-sm">
-                <h6 class="fw-bold small mb-2 text-brown"><i class="bi bi-shield-lock me-1"></i> Privasi Terjaga</h6>
-                <p class="small text-muted mb-0" style="font-size: 0.75rem;">Verifikasi 4 digit nomor WhatsApp menjaga kerahasiaan data tamu.</p>
+                <h6 class="fw-bold small mb-2 text-brown"><i class="bi bi-whatsapp me-1"></i> Nomor Terdaftar</h6>
+                <p class="small text-muted mb-0" style="font-size: 0.75rem;">Pencarian menggunakan nomor WhatsApp yang terhubung ke reservasi.</p>
             </div>
         </div>
         <div class="col-md-4">

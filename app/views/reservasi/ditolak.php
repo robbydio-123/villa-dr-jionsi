@@ -2,7 +2,7 @@
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb small mb-0">
-            <li class="breadcrumb-item"><a href="index.php" class="text-decoration-none text-muted">Beranda</a></li>
+            <li class="breadcrumb-item"><a href="beranda.php" class="text-decoration-none text-muted">Beranda</a></li>
             <li class="breadcrumb-item"><a href="formulir.php" class="text-decoration-none text-muted">Formulir Reservasi</a></li>
             <li class="breadcrumb-item active fw-bold text-dark" aria-current="page"><span class="text-muted fw-normal me-1">/</span> Verifikasi Bukti Pembayaran</li>
         </ol>
@@ -90,10 +90,8 @@
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
                         <label class="form-label small fw-bold text-dark mb-1">Metode Pembayaran *</label>
-                        <select class="form-select border-secondary-subtle" name="metode" required>
-                            <option value="QRIS" selected>QRIS Resmi Villa D-R Jionsi</option>
-                            <option value="BCA">Transfer Bank BCA</option>
-                        </select>
+                        <input type="text" class="form-control border-secondary-subtle" value="QRIS Resmi Villa D-R Jionsi" readonly>
+                        <input type="hidden" name="metode" value="QRIS">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label small fw-bold text-dark mb-1">Nominal yang Ditransfer (Rp) *</label>
@@ -108,7 +106,7 @@
             </form>
 
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 pt-3 border-top">
-                <a href="index.php" class="text-decoration-none text-muted small fw-semibold">
+                <a href="beranda.php" class="text-decoration-none text-muted small fw-semibold">
                     <i class="bi bi-arrow-left me-1"></i> Kembali ke Katalog Kamar
                 </a>
                 <a href="https://wa.me/6281233449081" target="_blank" class="btn btn-outline-success btn-sm fw-bold rounded-pill px-3">

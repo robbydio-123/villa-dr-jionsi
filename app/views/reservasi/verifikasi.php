@@ -2,7 +2,7 @@
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb small mb-0">
-            <li class="breadcrumb-item"><a href="index.php" class="text-decoration-none text-muted">Katalog</a></li>
+            <li class="breadcrumb-item"><a href="beranda.php" class="text-decoration-none text-muted">Katalog</a></li>
             <li class="breadcrumb-item"><a href="detail.php" class="text-decoration-none text-muted">Kamar 201</a></li>
             <li class="breadcrumb-item"><a href="formulir.php" class="text-decoration-none text-muted">Formulir Reservasi</a></li>
             <li class="breadcrumb-item"><a href="keep.php" class="text-decoration-none text-muted">Pesan & pembayaran</a></li>
@@ -157,7 +157,7 @@
             <div class="bg-light p-3 rounded d-flex justify-content-between align-items-center border">
                 <div>
                     <small class="text-muted d-block" style="font-size: 0.7rem;">Total Pembayaran (2 Malam)</small>
-                    <small class="text-dark fw-bold" style="font-size: 0.75rem;">Lunas Transfer Bank BCA / QRIS</small>
+                    <small class="text-dark fw-bold" style="font-size: 0.75rem;">Lunas via QRIS</small>
                 </div>
                 <h5 class="fw-bolder text-brown mb-0">Rp 1.700.000</h5>
             </div>

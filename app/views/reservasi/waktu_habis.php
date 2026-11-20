@@ -2,7 +2,7 @@
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb small mb-0">
-            <li class="breadcrumb-item"><a href="index.php" class="text-decoration-none text-muted">Beranda</a></li>
+            <li class="breadcrumb-item"><a href="beranda.php" class="text-decoration-none text-muted">Beranda</a></li>
             <li class="breadcrumb-item"><a href="formulir.php" class="text-decoration-none text-muted">Formulir Reservasi</a></li>
             <li class="breadcrumb-item active fw-bold text-dark" aria-current="page"><span class="text-muted fw-normal me-1">/</span> Waktu Keep Berakhir</li>
         </ol>
@@ -82,7 +82,7 @@
             <!-- Tombol Aksi -->
             <div class="d-flex flex-column flex-md-row justify-content-center gap-3 mb-5 mx-auto" style="max-width: 600px;">
                 <a href="detail.php" class="btn btn-brown flex-fill fw-bold py-3 rounded-3"><i class="bi bi-arrow-clockwise me-2"></i> Keep Ulang Kamar Ini</a>
-                <a href="index.php" class="btn btn-light border border-secondary-subtle text-dark flex-fill fw-bold py-3 rounded-3"><i class="bi bi-grid me-2"></i> Kembali ke Katalog</a>
+                <a href="beranda.php" class="btn btn-light border border-secondary-subtle text-dark flex-fill fw-bold py-3 rounded-3"><i class="bi bi-grid me-2"></i> Kembali ke Katalog</a>
             </div>
 
             <!-- Box Bantuan WhatsApp -->

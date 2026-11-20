@@ -1,5 +1,18 @@
 
 document.addEventListener('DOMContentLoaded', function () {
+    const heroSlides = document.querySelectorAll('.hero-slide');
+    const heroIndicators = document.querySelectorAll('.hero-indicator');
+    if (heroSlides.length > 1) {
+        let activeSlide = 0;
+        window.setInterval(function () {
+            heroSlides[activeSlide].classList.remove('is-active');
+            heroIndicators[activeSlide]?.classList.remove('is-active');
+            activeSlide = (activeSlide + 1) % heroSlides.length;
+            heroSlides[activeSlide].classList.add('is-active');
+            heroIndicators[activeSlide]?.classList.add('is-active');
+        }, 4000);
+    }
+
     const checkinInput   = document.getElementById('waktuCheckin');
     const durasiSelect   = document.getElementById('durasiSewaJam');
     const checkoutInput  = document.getElementById('waktuCheckout');

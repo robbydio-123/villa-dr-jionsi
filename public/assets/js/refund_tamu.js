@@ -7,7 +7,31 @@ document.addEventListener('DOMContentLoaded', function () {
     // Penghitung karakter keterangan
     const ket = document.getElementById('rfKet');
     const cnt = document.getElementById('rfKetCount');
-    if (ket && cnt) ket.addEventListener('input', () => { cnt.textContent = ket.value.length; });
+    if (ket && cnt) {
+        const updateCount = () => { cnt.textContent = Array.from(ket.value).length; };
+        updateCount();
+        ket.addEventListener('input', updateCount);
+    }
+
+    // Rekening: hanya angka, dan kolom "nama bank" muncul bila memilih Lainnya
+    const bank = document.getElementById('rfBank');
+    const bankLainWrap = document.getElementById('rfBankLainWrap');
+    const bankLain = document.getElementById('rfBankLain');
+    if (bank && bankLainWrap) {
+        const toggleBankLain = () => {
+            const lain = bank.value === 'Lainnya';
+            bankLainWrap.classList.toggle('d-none', !lain);
+            if (bankLain) bankLain.required = lain;
+        };
+        toggleBankLain();
+        bank.addEventListener('change', toggleBankLain);
+    }
+    const noRek = document.getElementById('rfNoRek');
+    if (noRek) {
+        noRek.addEventListener('input', () => {
+            noRek.value = noRek.value.replace(/\D+/g, '');
+        });
+    }
 
     // Nama file lampiran + batas ukuran 2 MB
     const file   = document.getElementById('rfFile');
